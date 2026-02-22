@@ -45,3 +45,14 @@ Matrix* matrix_create(size_t rows, size_t cols, size_t element_size,
     return matrix;
 
 }
+
+void matrix_free(Matrix* mat)
+{
+    if (mat != NULL) {
+        if (mat -> data != NULL) {
+            free(mat -> data);
+        }
+        free(mat);
+    }
+    return;
+}
