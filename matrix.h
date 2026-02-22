@@ -3,27 +3,27 @@
 
 #include <stdlib.h>
 
-// Типы данных
-typedef enum {
-    TYPE_INT,
-    TYPE_DOUBLE
-} DataType;
-
-// Структура для хранения элемента матрицы
 typedef struct {
-    DataType type;
-    union {
-        int int_value;
-        double double_value;
-    } data;
-} MatrixElement;
-
-typedef struct{
-    MatrixElement** data; //элементы
-    int rows; //количество строк
-    int cols; //количество столбцов
+    void* data;               // Непрерывный блок памяти для всех элементов
+    size_t element_size;      // Размер одного элемента
+    size_t rows;              // Количество строк
+    size_t cols;              // Количество столбцов
+    
+    // Функции для работы с элементами
+    void (*print_element)(void*);                    // Печать элемента
+    void (*add_elements)(void*, void*, void*);       // Сложение элементов
+    void (*multiply_elements)(void*, void*, void*);  // Умножение элементов
+    double (*norm_element)(void*);                    // Норма/модуль элемента
+    void (*set_zero)(void*);                          // Установка в ноль
+    void (*copy_element)(void*, void*);               // Копирование элемента
 } Matrix;
 
-Matrix* matrix_create(int rows, int cols, int type);
+Matrix* matrix_create(size_t rows, size_t cols, size_t element_size,
+                      void (*print_element)(void*),
+                      void (*add_elements)(void*, void*, void*),
+                      void (*multiply_elements)(void*, void*, void*),
+                      double (*norm_element)(void*),
+                      void (*set_zero)(void*),
+                      void (*copy_element)(void*, void*));
 
 #endif //MATRIX_H
