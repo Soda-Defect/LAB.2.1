@@ -12,8 +12,8 @@ void add_float(void* result, void* a, void* b) {
     *(float *)result = *(float *)a + *(float *)b;
 }
 
-void mult_float(void* a, void* b) {
-    (*(float *)a * *(float *)b);
+void mult_float(void* result, void* a, void* b) {
+    *(float *)result = (*(float *)a * *(float *)b);
 }
 
 Matrix* create_int_matrix(size_t rows, size_t cols) {

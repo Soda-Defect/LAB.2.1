@@ -12,8 +12,8 @@ void add_int(void* result, void* a, void* b) {
     *(int *)result = *(int *)a + *(int *)b;
 }
 
-void mult_int(void* a, void* b) {
-    (*(int *)a * *(int *)b);
+void mult_int(void* result, void* a, void* b) {
+    *(int *)result = (*(int *)a * *(int *)b);
 }
 
 Matrix* create_int_matrix(size_t rows, size_t cols) {

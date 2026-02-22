@@ -3,7 +3,7 @@
 Matrix* matrix_create(size_t rows, size_t cols, size_t element_size,
                       void (*print_element)(void*),
                       void (*add_elements)(void*, void*, void*),
-                      void (*multiply_elements)(void*, void*)){
+                      void (*multiply_elements)(void*, void*, void*)){
 
     if (rows <= 0 || cols <= 0){
         printf("ОШИБКА: Размеры матрицы должны быть положительными!\n");
