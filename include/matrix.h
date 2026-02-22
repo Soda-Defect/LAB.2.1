@@ -13,17 +13,11 @@ typedef struct {
     void (*print_element)(void*);                    // Печать элемента
     void (*add_elements)(void*, void*, void*);       // Сложение элементов
     void (*multiply_elements)(void*, void*, void*);  // Умножение элементов
-    double (*norm_element)(void*);                    // Норма/модуль элемента
-    void (*set_zero)(void*);                          // Установка в ноль
-    void (*copy_element)(void*, void*);               // Копирование элемента
 } Matrix;
 
 Matrix* matrix_create(size_t rows, size_t cols, size_t element_size,
                       void (*print_element)(void*),
                       void (*add_elements)(void*, void*, void*),
-                      void (*multiply_elements)(void*, void*, void*),
-                      double (*norm_element)(void*),
-                      void (*set_zero)(void*),
-                      void (*copy_element)(void*, void*));
+                      void (*multiply_elements)(void*, void*));
 
 #endif //MATRIX_H
