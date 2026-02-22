@@ -1,4 +1,4 @@
-#include "include/matrix.h"
+#include "include/matrix/matrix.h"
 
 Matrix* matrix_create(size_t rows, size_t cols, size_t element_size,
                       void (*print_element)(void*),

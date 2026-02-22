@@ -1,7 +1,7 @@
 #ifndef MATRIX_COMPLEX_H
 #define MATRIX_COMPLEX_H
 
-#include "complex.h"
+#include "../complex.h"
 #include "matrix.h"
 
 void print_complex(void* element) {
