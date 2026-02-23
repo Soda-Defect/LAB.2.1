@@ -105,8 +105,47 @@ Matrix* matrix_add(Matrix* mat_1, Matrix* mat_2)
     }
 
     return result;
+}
 
+Matrix* matrix_mult(Matrix* mat_1, Matrix* mat_2)
+{
+    if(mat_1 == NULL || mat_2 == NULL || mat_1 -> add_elements == NULL || mat_2 -> add_elements == NULL){
+        return NULL;
+    }
+    if(mat_1 -> cols != mat_2 -> rows){
+        error_print(9);
+        return NULL;
+    }
 
+    Matrix* result = matrix_create(mat_1 -> rows, mat_2 -> cols, mat_1 -> element_size, mat_1 -> print_element, mat_1 -> add_elements, mat_1 ->multiply_elements);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for(int i = 0; i < mat_1 -> rows; i++){
+        for(int j = 0; j < mat_2 -> cols; j++){
+            void* sum = malloc(mat_1 -> element_size);
+            if(sum == NULL){
+                return NULL;
+            }
+            memset(sum, 0, mat_1->element_size);
+            for(int k = 0; k < mat_1 -> cols; k++){
+                void* mult = malloc(mat_1 -> element_size);
+                if(mult == NULL){
+                    return NULL;
+                }
+                void* elem_1 = element_get(mat_1, i, k);
+                void* elem_2 = element_get(mat_2, k, j);
+                mat_1 -> multiply_elements(mult, elem_1, elem_2);
+                mat_1 -> add_elements(sum, sum, mult);
+                free(mult);
+            }
+            push_back(result, sum, i, j);
+            free(sum);
+        }
+    }
+
+    return result;
 }
 
 void print_matrix(Matrix* mat) {

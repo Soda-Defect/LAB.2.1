@@ -22,6 +22,7 @@ Matrix* matrix_create(size_t rows, size_t cols, size_t element_size,
 void push_back(Matrix* mat, void* item, int row, int col);
 void* element_get(Matrix* mat, int row, int col);
 Matrix* matrix_add(Matrix* mat_1, Matrix* mat_2);
+Matrix* matrix_mult(Matrix* mat_1, Matrix* mat_2);
 void print_matrix(Matrix* mat);
 void matrix_free(Matrix* mat);
 

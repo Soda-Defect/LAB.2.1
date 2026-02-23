@@ -61,6 +61,9 @@ void error_print(int error)
         case 8:
             printf("ОШИБКА: Для сложения матрицы должны быть одинаковой размерности!\n");
             break;
+        case 9:
+            printf("ОШИБКА: Для произведения количество столбцов первой матрицы должно быть равно количеству строк второй матрицы!\n");
+            break;
     }
 }
 
@@ -190,6 +193,9 @@ void process(int choice, int type)
             print_matrix(sum);
             break;
         case 2:
+            Matrix* mult = matrix_mult(mat_1, mat_2);
+            printf("\nПолученная Матрица: \n");
+            print_matrix(mult);
             break;
         case 3:
             break;
