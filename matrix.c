@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "include/matrix/matrix.h"
 
 Matrix* matrix_create(size_t rows, size_t cols, size_t element_size,
@@ -6,18 +7,18 @@ Matrix* matrix_create(size_t rows, size_t cols, size_t element_size,
                       void (*multiply_elements)(void*, void*, void*)){
 
     if (rows <= 0 || cols <= 0){
-        printf("ÐžÐ¨Ð˜Ð‘ÐšÐ: Ð Ð°Ð·Ð¼ÐµÑ€Ñ‹ Ð¼Ð°Ñ‚Ñ€Ð¸Ñ†Ñ‹ Ð´Ð¾Ð»Ð¶Ð½Ñ‹ Ð±Ñ‹Ñ‚ÑŒ Ð¿Ð¾Ð»Ð¾Ð¶Ð¸Ñ‚ÐµÐ»ÑŒÐ½Ñ‹Ð¼Ð¸!\n");
+        printf("ÎØÈÁÊÀ: Ðàçìåð ìàòðèöû äîëæåí áûòü ïîëîæèòåëüíûì!\n");
         return NULL;
     }
 
     Matrix* matrix = (Matrix *)malloc(sizeof(Matrix));
 
     if(!matrix){
-        printf("ÐžÑˆÐ¸Ð±ÐºÐ° Ð²Ñ‹Ð´ÐµÐ»ÐµÐ½Ð¸Ñ Ð¿Ð°Ð¼ÑÑ‚Ð¸ Ð´Ð»Ñ Ð¼Ð°Ñ‚Ñ€Ð¸Ñ†Ñ‹!\n");
+        printf("Îøèáêà âûäåëåíèÿ ïàìÿòè äëÿ ìàòðèöû!\n");
         return NULL;
     }
     if(element_size == 0){
-        printf("ÐžÐ¨Ð˜Ð‘ÐšÐ: Ð Ð°Ð·Ð¼ÐµÑ€ ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ð° Ð´Ð¾Ð»Ð¶ÐµÐ½ Ð±Ñ‹Ñ‚ÑŒ Ð±Ð¾Ð»ÑŒÑˆÐµ Ð½ÑƒÐ»Ñ!\n");
+        printf("ÎØÈÁÊÀ: Ðàçìåð ýëåìåíòà äîëæåí áûòü áîëüøå íóëÿ!\n!\n");
         return NULL;
     }
 

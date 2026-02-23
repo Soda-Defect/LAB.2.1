@@ -1,8 +1,11 @@
 #include <stdio.h>
+#include <locale.h>
 #include "include/func.h"
 
 
 int main(void) {
+    char *locale = setlocale(LC_ALL, "");
+
     int choice_type, choice;
     do {
         print_type();

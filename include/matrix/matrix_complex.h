@@ -25,7 +25,7 @@ void mult_complex(void* result, void* a, void* b) {
     *res = complex_mul(*c1, *c2);
 }
 
-Matrix* create_complex_vector(size_t rows, size_t cols) {
+Matrix* create_complex_matrix(size_t rows, size_t cols) {
     return matrix_create(rows, cols, sizeof(Complex), print_complex, add_complex, mult_complex);
 }
 
