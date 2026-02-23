@@ -110,6 +110,7 @@ void process(int choice, int type)
 {
     int rows, cols;
     Matrix* mat_1 = NULL;
+    Matrix* mat_2 = NULL;
     if(choice == 0){
         error_print(1);
         return;
@@ -125,17 +126,50 @@ void process(int choice, int type)
         case 1:
             mat_1 = create_int_matrix(rows, cols);
             int_input(mat_1);
+            printf("\nМатрица: \n");
             print_matrix(mat_1);
+            if(choice >= 1 && choice <= 2){
+                printf("Введите количество строк матрицы\n");
+                scanf("%d", &rows);
+                printf("Введите количество столбцов матрицы\n");
+                scanf("%d", &cols);
+                mat_2 = create_int_matrix(rows, cols);
+                int_input(mat_2);
+                printf("\nВторая Матрица: \n");
+                print_matrix(mat_2);
+            }
             break;
         case 2:
             mat_1 = create_float_matrix(rows, cols);
             float_input(mat_1);
+            printf("\nМатрица: \n");
             print_matrix(mat_1);
+            if(choice >= 1 && choice <= 2){
+                printf("Введите количество строк матрицы\n");
+                scanf("%d", &rows);
+                printf("Введите количество столбцов матрицы\n");
+                scanf("%d", &cols);
+                mat_2 = create_float_matrix(rows, cols);
+                float_input(mat_2);
+                printf("\nВторая Матрица: \n");
+                print_matrix(mat_2);
+            }
             break;
         case 3:
             mat_1 = create_complex_matrix(rows, cols);
             complex_input(mat_1);
+            printf("\nМатрица: \n");
             print_matrix(mat_1);
+            if(choice >= 1 && choice <= 2){
+                printf("Введите количество строк матрицы\n");
+                scanf("%d", &rows);
+                printf("Введите количество столбцов матрицы\n");
+                scanf("%d", &cols);
+                mat_2 = create_complex_matrix(rows, cols);
+                complex_input(mat_2);
+                printf("\nВторая Матрица: \n");
+                print_matrix(mat_2);
+            }
             break;
         default:
             error_print(5);
