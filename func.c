@@ -1,4 +1,8 @@
 #include <stdio.h>
+#include "include/matrix/matrix.h"
+#include "include/matrix/matrix_int.h"
+#include "include/matrix/matrix_float.h"
+#include "include/matrix/matrix_complex.h"
 
 void print_type()
 {
@@ -48,11 +52,96 @@ void error_print(int error)
         case 5:
             printf("Неправильный выбор! Выберите действие из представленных в меню!\n");
             break;
+        case 6:
+            printf("ОШИБКА: Указанный номер не входит в диапозон размера!\n");
+            break;
+        case 7:
+            printf("ОШИБКА: Отсутствует i в комплексном числе!\n");
+            break;
     }
 }
 
-void process(int choice)
+void int_input(Matrix* mat)
 {
+    int value;
+    printf("Введите элементы:\n");
+    for(int i = 0; i < mat -> rows; i++){
+        for(int j = 0; j < mat -> cols; j++){
+            scanf("%d", &value);
+            push_back(mat, &value, i, j);
+        }
+    }
+}
+
+void float_input(Matrix* mat)
+{
+    float value;
+    printf("Введите элементы:\n");
+    for(int i = 0; i < mat -> rows; i++){
+        for(int j = 0; j < mat -> cols; j++){
+            scanf("%f", &value);
+            push_back(mat, &value, i, j);
+        }
+    }
+}
+
+void complex_input(Matrix* mat)
+{
+    double re, im;
+    char sign, i_char;
+    printf("Введите элементы в формате a+bi: \n");
+    for(int i = 0; i < mat -> rows; i++){
+        for(int j = 0; j < mat -> cols; j++){
+            scanf("%lf%c%lf%c", &re, &sign, &im, &i_char);
+            if(sign == '-'){
+                im *= -1;
+            }
+            if(i_char != 'i'){
+                error_print(7);
+            }
+            Complex c = complex_create(re, im);
+            push_back(mat, &c, i, j);
+            
+        }
+    }
+}
+
+void process(int choice, int type)
+{
+    int rows, cols;
+    Matrix* mat_1 = NULL;
+    if(choice == 0){
+        error_print(1);
+        return;
+    }
+
+    printf("Введите количество строк матрицы\n");
+    scanf("%d", &rows);
+    printf("Введите количество столбцов матрицы\n");
+    scanf("%d", &cols);
+
+    switch(type)
+    {
+        case 1:
+            mat_1 = create_int_matrix(rows, cols);
+            int_input(mat_1);
+            print_matrix(mat_1);
+            break;
+        case 2:
+            mat_1 = create_float_matrix(rows, cols);
+            float_input(mat_1);
+            print_matrix(mat_1);
+            break;
+        case 3:
+            mat_1 = create_complex_matrix(rows, cols);
+            complex_input(mat_1);
+            print_matrix(mat_1);
+            break;
+        default:
+            error_print(5);
+            break;
+    }
+
     switch (choice)
     {
         case 0:
@@ -65,31 +154,6 @@ void process(int choice)
         case 3:
             break;
         case 4:
-            break;
-        default:
-            error_print(5);
-            break;
-    }
-}
-
-void choice_type(int choice, int type)
-{
-    switch(type)
-    {
-        case 0:
-            error_print(1);
-            return;
-        case 1:
-            printf("Выбран целый\n");
-            process(choice);
-            break;
-        case 2:
-            printf("Выбран вещественный\n");
-            process(choice);
-            break;
-        case 3:
-            printf("Выбран комплексный\n");
-            process(choice);
             break;
         default:
             error_print(5);

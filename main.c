@@ -16,6 +16,6 @@ int main(void) {
         }
         print_menu();
         scanf("%d", &choice);
-        choice_type(choice, type);
+        process(choice, type);
     } while (choice != 0 && type != 0);
 }

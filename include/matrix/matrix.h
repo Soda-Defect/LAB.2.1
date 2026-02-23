@@ -19,5 +19,9 @@ Matrix* matrix_create(size_t rows, size_t cols, size_t element_size,
                       void (*print_element)(void*),
                       void (*add_elements)(void*, void*, void*),
                       void (*multiply_elements)(void*, void*, void*));
+void push_back(Matrix* mat, void* item, int row, int col);
+void* element_get(Matrix* mat, int row, int col);
+void print_matrix(Matrix* mat);
+void matrix_free(Matrix* mat);
 
 #endif //MATRIX_H
