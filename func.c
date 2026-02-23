@@ -58,6 +58,9 @@ void error_print(int error)
         case 7:
             printf("ОШИБКА: Отсутствует i в комплексном числе!\n");
             break;
+        case 8:
+            printf("ОШИБКА: Для сложения матрицы должны быть одинаковой размерности!\n");
+            break;
     }
 }
 
@@ -182,6 +185,9 @@ void process(int choice, int type)
             error_print(1);
             return;
         case 1:
+            Matrix* sum = matrix_add(mat_1, mat_2);
+            printf("\nПолученная Матрица: \n");
+            print_matrix(sum);
             break;
         case 2:
             break;
