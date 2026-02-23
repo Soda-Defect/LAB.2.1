@@ -6,12 +6,16 @@
 int main(void) {
     char *locale = setlocale(LC_ALL, "");
 
-    int choice_type, choice;
+    int type, choice;
     do {
         print_type();
-        scanf("%d", &choice_type);
+        scanf("%d", &type);
+        if(type == 0){
+            error_print(1);
+            return 0;
+        }
         print_menu();
         scanf("%d", &choice);
-        process(choice, choice_type);
-    } while (choice != 0 && choice_type != 0);
+        choice_type(choice, type);
+    } while (choice != 0 && type != 0);
 }

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "include/matrix/matrix.h"
+#include "include/func.h"
 
 Matrix* matrix_create(size_t rows, size_t cols, size_t element_size,
                       void (*print_element)(void*),
@@ -7,18 +8,18 @@ Matrix* matrix_create(size_t rows, size_t cols, size_t element_size,
                       void (*multiply_elements)(void*, void*, void*)){
 
     if (rows <= 0 || cols <= 0){
-        printf("ОШИБКА: Размер матрицы должен быть положительным!\n");
+        error_print(2);
         return NULL;
     }
 
     Matrix* matrix = (Matrix *)malloc(sizeof(Matrix));
 
     if(!matrix){
-        printf("Ошибка выделения памяти для матрицы!\n");
+        error_print(3);
         return NULL;
     }
     if(element_size == 0){
-        printf("ОШИБКА: Размер элемента должен быть больше нуля!\n!\n");
+        error_print(4);
         return NULL;
     }
 

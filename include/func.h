@@ -3,7 +3,9 @@
 
 void print_type();
 void print_menu();
-void process(int choice, int type);
+void error_print(int error);
+void choice_type(int choice, int type);
+void process(int choice);
 
 
 #endif //FUNC_H

@@ -16,7 +16,7 @@ void print_type()
 
 void print_menu()
 {
-    printf("===================================\n");
+    printf("\n===================================\n");
     printf("        КОНСОЛЬНОЕ МЕНЮ            \n");
     printf("===================================\n");
     printf("      Прямоугольная матрица        \n");
@@ -29,27 +29,70 @@ void print_menu()
     printf("Ваш выбор: ");
 }
 
-void process(int choice, int type)
+void error_print(int error)
 {
-    if(type == 0)
+    switch(error)
     {
-        return;
+        case 1:
+            printf("Выход из программы!\n");
+            break;
+        case 2:
+            printf("ОШИБКА: Размер матрицы должен быть положительным!\n");
+            break;
+        case 3:
+            printf("Ошибка выделения памяти для матрицы!\n");
+            break;
+        case 4:
+            printf("ОШИБКА: Размер элемента должен быть больше нуля!\n!\n");
+            break;
+        case 5:
+            printf("Неправильный выбор! Выберите действие из представленных в меню!\n");
+            break;
     }
+}
+
+void process(int choice)
+{
     switch (choice)
     {
-    case 0:
-        printf("Выход из программы!\n");
-        return;
-    case 1:
-        break;
-    case 2:
-        break;
-    case 3:
-        break;
-    case 4:
-        break;
-    default:
-        printf("Неправильный выбор! Выберите действие из представленных в меню!\n");
-        break;
+        case 0:
+            error_print(1);
+            return;
+        case 1:
+            break;
+        case 2:
+            break;
+        case 3:
+            break;
+        case 4:
+            break;
+        default:
+            error_print(5);
+            break;
+    }
+}
+
+void choice_type(int choice, int type)
+{
+    switch(type)
+    {
+        case 0:
+            error_print(1);
+            return;
+        case 1:
+            printf("Выбран целый\n");
+            process(choice);
+            break;
+        case 2:
+            printf("Выбран вещественный\n");
+            process(choice);
+            break;
+        case 3:
+            printf("Выбран комплексный\n");
+            process(choice);
+            break;
+        default:
+            error_print(5);
+            break;
     }
 }
