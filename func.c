@@ -197,16 +197,24 @@ void process(int choice, int type)
             Matrix* sum = matrix_add(mat_1, mat_2);
             printf("\nПолученная Матрица: \n");
             print_matrix(sum);
+            matrix_free(mat_1);
+            matrix_free(mat_2);
+            matrix_free(sum);
             break;
         case 2:
             Matrix* mult = matrix_mult(mat_1, mat_2);
             printf("\nПолученная Матрица: \n");
             print_matrix(mult);
+            matrix_free(mat_1);
+            matrix_free(mat_2);
+            matrix_free(mult);
             break;
         case 3:
             Matrix* transp = matrix_transp(mat_1);
             printf("\nПолученная Матрица: \n");
             print_matrix(transp);
+            matrix_free(mat_1);
+            matrix_free(transp);
             break;
         case 4:
             int rowIndex;
@@ -230,6 +238,7 @@ void process(int choice, int type)
             }
             printf("\nПолученная Матрица: \n");
             print_matrix(mat_1);
+            matrix_free(mat_1);
             break;
         default:
             error_print(5);
