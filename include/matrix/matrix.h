@@ -24,6 +24,7 @@ void* element_get(Matrix* mat, int row, int col);
 Matrix* matrix_add(Matrix* mat_1, Matrix* mat_2);
 Matrix* matrix_mult(Matrix* mat_1, Matrix* mat_2);
 Matrix* matrix_transp(Matrix* mat_1);
+void matrix_add_line_comb(Matrix* mat_1, int rowIndex, int rowAlph, void* alhpa);
 void print_matrix(Matrix* mat);
 void matrix_free(Matrix* mat);
 

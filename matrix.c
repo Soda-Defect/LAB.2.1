@@ -150,7 +150,7 @@ Matrix* matrix_mult(Matrix* mat_1, Matrix* mat_2)
 
 Matrix* matrix_transp(Matrix* mat_1)
 {
-    if(mat_1 == NULL || mat_1 -> add_elements == NULL){
+    if(mat_1 == NULL){
         return NULL;
     }
 
@@ -167,6 +167,27 @@ Matrix* matrix_transp(Matrix* mat_1)
     }
 
     return result;
+}
+
+void matrix_add_line_comb(Matrix* mat_1, int rowIndex, int rowAlph, void* alhpa)
+{
+    if(mat_1 == NULL || mat_1 -> add_elements == NULL || mat_1 -> multiply_elements == NULL){
+        return;
+    }
+
+    for(int j = 0; j < mat_1 -> cols; j++){
+        void* elem_1 = element_get(mat_1, rowIndex, j);
+        void* elem_2 = element_get(mat_1, rowAlph, j);
+
+        void* mult = malloc(mat_1 -> element_size);
+        if(mult == NULL){
+            return;
+        }
+        mat_1 -> multiply_elements(mult, alhpa, elem_2);
+        mat_1 -> add_elements(elem_1, elem_1, mult);
+        push_el_matrix(mat_1, elem_1, rowIndex, j);
+    }
+
 }
 
 void print_matrix(Matrix* mat) {

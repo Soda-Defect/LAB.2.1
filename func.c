@@ -64,6 +64,12 @@ void error_print(int error)
         case 9:
             printf("ОШИБКА: Для произведения количество столбцов первой матрицы должно быть равно количеству строк второй матрицы!\n");
             break;
+        case 10:
+            printf("ОШИБКА: Номер строки должен быть больше нуля!\n");
+            break;
+        case 11:
+            printf("ОШИБКА: Номер строки не может быть больше максимального номера строки матрицы!\n");
+            break;
     }
 }
 
@@ -203,6 +209,27 @@ void process(int choice, int type)
             print_matrix(transp);
             break;
         case 4:
+            int rowIndex;
+            printf("К какой строке прибавить комбинацию?\n");
+            scanf("%d", &rowIndex);
+            if(rowIndex <= 0){
+                error_print(10);
+                break;
+            }
+            if(rowIndex > mat_1 -> rows){
+                error_print(11);
+                break;
+            }
+            int alpha;
+            for(int i = 0; i < mat_1 -> rows; i++){
+                if(i + 1 != rowIndex){
+                    printf("На какой коэффициент надо умножить %d строку?\n", i + 1);
+                    scanf("%d", &alpha);
+                    matrix_add_line_comb(mat_1, rowIndex - 1, i, &alpha);
+                }
+            }
+            printf("\nПолученная Матрица: \n");
+            print_matrix(mat_1);
             break;
         default:
             error_print(5);
