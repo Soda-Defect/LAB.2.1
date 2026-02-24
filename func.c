@@ -74,7 +74,7 @@ void int_input(Matrix* mat)
     for(int i = 0; i < mat -> rows; i++){
         for(int j = 0; j < mat -> cols; j++){
             scanf("%d", &value);
-            push_back(mat, &value, i, j);
+            push_el_matrix(mat, &value, i, j);
         }
     }
 }
@@ -86,7 +86,7 @@ void float_input(Matrix* mat)
     for(int i = 0; i < mat -> rows; i++){
         for(int j = 0; j < mat -> cols; j++){
             scanf("%f", &value);
-            push_back(mat, &value, i, j);
+            push_el_matrix(mat, &value, i, j);
         }
     }
 }
@@ -106,7 +106,7 @@ void complex_input(Matrix* mat)
                 error_print(7);
             }
             Complex c = complex_create(re, im);
-            push_back(mat, &c, i, j);
+            push_el_matrix(mat, &c, i, j);
             
         }
     }
@@ -198,6 +198,9 @@ void process(int choice, int type)
             print_matrix(mult);
             break;
         case 3:
+            Matrix* transp = matrix_transp(mat_1);
+            printf("\nПолученная Матрица: \n");
+            print_matrix(transp);
             break;
         case 4:
             break;

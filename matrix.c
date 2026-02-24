@@ -43,7 +43,7 @@ Matrix* matrix_create(size_t rows, size_t cols, size_t element_size,
 
 }
 
-void push_back(Matrix* mat, void* item, int row, int col)
+void push_el_matrix(Matrix* mat, void* item, int row, int col)
 {
     if(mat == NULL || item == NULL){
         return;
@@ -99,7 +99,7 @@ Matrix* matrix_add(Matrix* mat_1, Matrix* mat_2)
 
             mat_1 -> add_elements(sum, elem_1, elem_2);
 
-            push_back(result, sum, i, j);
+            push_el_matrix(result, sum, i, j);
             free(sum);
         }
     }
@@ -109,7 +109,7 @@ Matrix* matrix_add(Matrix* mat_1, Matrix* mat_2)
 
 Matrix* matrix_mult(Matrix* mat_1, Matrix* mat_2)
 {
-    if(mat_1 == NULL || mat_2 == NULL || mat_1 -> add_elements == NULL || mat_2 -> add_elements == NULL){
+    if(mat_1 == NULL || mat_2 == NULL || mat_1 -> add_elements == NULL || mat_1 -> multiply_elements == NULL){
         return NULL;
     }
     if(mat_1 -> cols != mat_2 -> rows){
@@ -140,8 +140,29 @@ Matrix* matrix_mult(Matrix* mat_1, Matrix* mat_2)
                 mat_1 -> add_elements(sum, sum, mult);
                 free(mult);
             }
-            push_back(result, sum, i, j);
+            push_el_matrix(result, sum, i, j);
             free(sum);
+        }
+    }
+
+    return result;
+}
+
+Matrix* matrix_transp(Matrix* mat_1)
+{
+    if(mat_1 == NULL || mat_1 -> add_elements == NULL){
+        return NULL;
+    }
+
+    Matrix* result = matrix_create(mat_1 -> cols, mat_1 -> rows, mat_1 -> element_size, mat_1 -> print_element, mat_1 -> add_elements, mat_1 ->multiply_elements);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for(int i = 0; i < mat_1 -> rows; i++){
+        for(int j = 0; j < mat_1 ->cols; j++){
+            void* elem_1 = element_get(mat_1, i, j);
+            push_el_matrix(result, elem_1, j, i);
         }
     }
 
