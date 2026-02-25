@@ -3,12 +3,12 @@
 #include "include/matrix/matrix.h"
 #include "include/func.h"
 
-Matrix* matrix_create(size_t rows, size_t cols, size_t element_size,
+Matrix* matrix_create(size_t razm, size_t element_size,
                       void (*print_element)(void*),
                       void (*add_elements)(void*, void*, void*),
                       void (*multiply_elements)(void*, void*, void*)){
 
-    if (rows <= 0 || cols <= 0){
+    if (razm <= 0){
         error_print(2);
         return NULL;
     }
@@ -24,15 +24,14 @@ Matrix* matrix_create(size_t rows, size_t cols, size_t element_size,
         return NULL;
     }
 
-    matrix->data = malloc(element_size * rows * cols);
+    matrix->data = malloc(element_size * razm * razm);
 
     if(!matrix->data){
         free(matrix);
         return NULL;
     }
 
-    matrix->rows = rows;
-    matrix->cols = cols;
+    matrix->razm = razm;
     matrix->element_size = element_size;
 
     matrix->print_element = print_element;
@@ -48,12 +47,12 @@ void push_el_matrix(Matrix* mat, void* item, int row, int col)
     if(mat == NULL || item == NULL){
         return;
     }
-    if (row < 0 || row > mat->rows || col < 0 || col > mat->cols){
+    if (row < 0 || row > mat->razm || col < 0 || col > mat->razm){
         error_print(6);
         return;
     }
 
-    char* target = ((char*)((mat)->data) + ((row) * (mat)->cols + (col)) * (mat)->element_size); // Итерируемся до места добавления нового элемента
+    char* target = ((char*)((mat)->data) + ((row) * (mat)->razm + (col)) * (mat)->element_size); // Итерируемся до места добавления нового элемента
     memcpy(target, item, mat -> element_size); // Добавляем элемент
 
     return;
@@ -64,12 +63,12 @@ void* element_get(Matrix* mat, int row, int col)
     if(mat == NULL){
         return NULL;
     }
-    if (row < 0 || row > mat->rows || col < 0 || col > mat->cols){
+    if (row < 0 || row > mat->razm || col < 0 || col > mat->razm){
         error_print(6);
         return NULL;
     }
 
-    return ((char*)((mat)->data) + ((row) * (mat)->cols + (col)) * (mat)->element_size);
+    return ((char*)((mat)->data) + ((row) * (mat)->razm + (col)) * (mat)->element_size);
 }
 
 Matrix* matrix_add(Matrix* mat_1, Matrix* mat_2)
@@ -77,18 +76,18 @@ Matrix* matrix_add(Matrix* mat_1, Matrix* mat_2)
     if(mat_1 == NULL || mat_2 == NULL || mat_1 -> add_elements == NULL || mat_2 -> add_elements == NULL){
         return NULL;
     }
-    if(mat_1 -> rows != mat_2 -> rows || mat_1 -> cols != mat_2 -> cols){
+    if(mat_1 -> razm != mat_2 -> razm){
         error_print(8);
         return NULL;
     }
 
-    Matrix* result = matrix_create(mat_1 -> rows, mat_1 -> cols, mat_1 -> element_size, mat_1 -> print_element, mat_1 -> add_elements, mat_1 ->multiply_elements);
+    Matrix* result = matrix_create(mat_1 -> razm, mat_1 -> element_size, mat_1 -> print_element, mat_1 -> add_elements, mat_1 ->multiply_elements);
     if (result == NULL) {
         return NULL;
     }
 
-    for(int i = 0; i < mat_1 -> rows; i++){
-        for(int j = 0; j < mat_1 -> cols; j++){
+    for(int i = 0; i < mat_1 -> razm; i++){
+        for(int j = 0; j < mat_1 -> razm; j++){
             void* sum = malloc(mat_1 -> element_size);
             if(sum == NULL){
                 return NULL;
@@ -112,24 +111,24 @@ Matrix* matrix_mult(Matrix* mat_1, Matrix* mat_2)
     if(mat_1 == NULL || mat_2 == NULL || mat_1 -> add_elements == NULL || mat_1 -> multiply_elements == NULL){
         return NULL;
     }
-    if(mat_1 -> cols != mat_2 -> rows){
+    if(mat_1 -> razm != mat_2 -> razm){
         error_print(9);
         return NULL;
     }
 
-    Matrix* result = matrix_create(mat_1 -> rows, mat_2 -> cols, mat_1 -> element_size, mat_1 -> print_element, mat_1 -> add_elements, mat_1 ->multiply_elements);
+    Matrix* result = matrix_create(mat_1 -> razm, mat_1 -> element_size, mat_1 -> print_element, mat_1 -> add_elements, mat_1 ->multiply_elements);
     if (result == NULL) {
         return NULL;
     }
 
-    for(int i = 0; i < mat_1 -> rows; i++){
-        for(int j = 0; j < mat_2 -> cols; j++){
+    for(int i = 0; i < mat_1 -> razm; i++){
+        for(int j = 0; j < mat_2 -> razm; j++){
             void* sum = malloc(mat_1 -> element_size);
             if(sum == NULL){
                 return NULL;
             }
             memset(sum, 0, mat_1->element_size);
-            for(int k = 0; k < mat_1 -> cols; k++){
+            for(int k = 0; k < mat_1 -> razm; k++){
                 void* mult = malloc(mat_1 -> element_size);
                 if(mult == NULL){
                     return NULL;
@@ -154,13 +153,13 @@ Matrix* matrix_transp(Matrix* mat_1)
         return NULL;
     }
 
-    Matrix* result = matrix_create(mat_1 -> cols, mat_1 -> rows, mat_1 -> element_size, mat_1 -> print_element, mat_1 -> add_elements, mat_1 ->multiply_elements);
+    Matrix* result = matrix_create(mat_1 -> razm, mat_1 -> element_size, mat_1 -> print_element, mat_1 -> add_elements, mat_1 ->multiply_elements);
     if (result == NULL) {
         return NULL;
     }
 
-    for(int i = 0; i < mat_1 -> rows; i++){
-        for(int j = 0; j < mat_1 ->cols; j++){
+    for(int i = 0; i < mat_1 -> razm; i++){
+        for(int j = 0; j < mat_1 ->razm; j++){
             void* elem_1 = element_get(mat_1, i, j);
             push_el_matrix(result, elem_1, j, i);
         }
@@ -175,7 +174,7 @@ void matrix_add_line_comb(Matrix* mat_1, int rowIndex, int rowAlph, void* alhpa)
         return;
     }
 
-    for(int j = 0; j < mat_1 -> cols; j++){
+    for(int j = 0; j < mat_1 -> razm; j++){
         void* elem_1 = element_get(mat_1, rowIndex, j);
         void* elem_2 = element_get(mat_1, rowAlph, j);
 
@@ -194,20 +193,18 @@ void print_matrix(Matrix* mat) {
     if (mat == NULL || mat -> print_element == NULL) {
         return;
     }
-    for(int i = 0; i < mat->rows; i++){
+    for(int i = 0; i < mat->razm; i++){
         printf("|");
-        for(int j = 0; j < mat->cols; j++){
+        for(int j = 0; j < mat->razm; j++){
             void* elem = element_get(mat, i, j);
             mat -> print_element(elem);
-            if(j + 1 != mat->cols){
+            if(j + 1 != mat->razm){
                 printf(" ");
             }
         }
         printf("|\n");
     }
 }
-
-//((char*)((matrix)->data) + ((row) * (matrix)->cols + (col)) * (matrix)->element_size)
 
 void matrix_free(Matrix* mat)
 {

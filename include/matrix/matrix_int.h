@@ -16,8 +16,8 @@ void mult_int(void* result, void* a, void* b) {
     *(int *)result = (*(int *)a * *(int *)b);
 }
 
-Matrix* create_int_matrix(size_t rows, size_t cols) {
-    return matrix_create(rows, cols, sizeof(int), print_int, add_int, mult_int);
+Matrix* create_int_matrix(size_t razm) {
+    return matrix_create(razm, sizeof(int), print_int, add_int, mult_int);
 }
 
 #endif //MATRIX_INT_H

@@ -23,7 +23,7 @@ void print_menu()
     printf("\n===================================\n");
     printf("        КОНСОЛЬНОЕ МЕНЮ            \n");
     printf("===================================\n");
-    printf("      Прямоугольная матрица        \n");
+    printf("       Квадратная матрица          \n");
     printf("1. Сложение матриц\n");
     printf("2. Произведение матриц\n");
     printf("3. Транспонирование матрицы\n");
@@ -77,8 +77,8 @@ void int_input(Matrix* mat)
 {
     int value;
     printf("Введите элементы:\n");
-    for(int i = 0; i < mat -> rows; i++){
-        for(int j = 0; j < mat -> cols; j++){
+    for(int i = 0; i < mat -> razm; i++){
+        for(int j = 0; j < mat -> razm; j++){
             scanf("%d", &value);
             push_el_matrix(mat, &value, i, j);
         }
@@ -89,8 +89,8 @@ void float_input(Matrix* mat)
 {
     float value;
     printf("Введите элементы:\n");
-    for(int i = 0; i < mat -> rows; i++){
-        for(int j = 0; j < mat -> cols; j++){
+    for(int i = 0; i < mat -> razm; i++){
+        for(int j = 0; j < mat -> razm; j++){
             scanf("%f", &value);
             push_el_matrix(mat, &value, i, j);
         }
@@ -102,8 +102,8 @@ void complex_input(Matrix* mat)
     double re, im;
     char sign, i_char;
     printf("Введите элементы в формате a+bi: \n");
-    for(int i = 0; i < mat -> rows; i++){
-        for(int j = 0; j < mat -> cols; j++){
+    for(int i = 0; i < mat -> razm; i++){
+        for(int j = 0; j < mat -> razm; j++){
             scanf("%lf%c%lf%c", &re, &sign, &im, &i_char);
             if(sign == '-'){
                 im *= -1;
@@ -120,7 +120,7 @@ void complex_input(Matrix* mat)
 
 void process(int choice, int type)
 {
-    int rows, cols;
+    int razm;
     Matrix* mat_1 = NULL;
     Matrix* mat_2 = NULL;
     if(choice == 0){
@@ -128,56 +128,48 @@ void process(int choice, int type)
         return;
     }
 
-    printf("Введите количество строк матрицы\n");
-    scanf("%d", &rows);
-    printf("Введите количество столбцов матрицы\n");
-    scanf("%d", &cols);
+    printf("Введите размерность квадратной матрицы\n");
+    scanf("%d", &razm);
 
     switch(type)
     {
         case 1:
-            mat_1 = create_int_matrix(rows, cols);
+            mat_1 = create_int_matrix(razm);
             int_input(mat_1);
             printf("\nМатрица: \n");
             print_matrix(mat_1);
             if(choice >= 1 && choice <= 2){
-                printf("Введите количество строк матрицы\n");
-                scanf("%d", &rows);
-                printf("Введите количество столбцов матрицы\n");
-                scanf("%d", &cols);
-                mat_2 = create_int_matrix(rows, cols);
+                printf("Введите размерность квадратной матрицы\n");
+                scanf("%d", &razm);
+                mat_2 = create_int_matrix(razm);
                 int_input(mat_2);
                 printf("\nВторая Матрица: \n");
                 print_matrix(mat_2);
             }
             break;
         case 2:
-            mat_1 = create_float_matrix(rows, cols);
+            mat_1 = create_float_matrix(razm);
             float_input(mat_1);
             printf("\nМатрица: \n");
             print_matrix(mat_1);
             if(choice >= 1 && choice <= 2){
-                printf("Введите количество строк матрицы\n");
-                scanf("%d", &rows);
-                printf("Введите количество столбцов матрицы\n");
-                scanf("%d", &cols);
-                mat_2 = create_float_matrix(rows, cols);
+                printf("Введите размерность квадратной матрицы\n");
+                scanf("%d", &razm);
+                mat_2 = create_float_matrix(razm);
                 float_input(mat_2);
                 printf("\nВторая Матрица: \n");
                 print_matrix(mat_2);
             }
             break;
         case 3:
-            mat_1 = create_complex_matrix(rows, cols);
+            mat_1 = create_complex_matrix(razm);
             complex_input(mat_1);
             printf("\nМатрица: \n");
             print_matrix(mat_1);
             if(choice >= 1 && choice <= 2){
-                printf("Введите количество строк матрицы\n");
-                scanf("%d", &rows);
-                printf("Введите количество столбцов матрицы\n");
-                scanf("%d", &cols);
-                mat_2 = create_complex_matrix(rows, cols);
+                printf("Введите размерность квадратной матрицы\n");
+                scanf("%d", &razm);
+                mat_2 = create_complex_matrix(razm);
                 complex_input(mat_2);
                 printf("\nВторая Матрица: \n");
                 print_matrix(mat_2);
@@ -224,12 +216,12 @@ void process(int choice, int type)
                 error_print(10);
                 break;
             }
-            if(rowIndex > mat_1 -> rows){
+            if(rowIndex > mat_1 -> razm){
                 error_print(11);
                 break;
             }
             int alpha;
-            for(int i = 0; i < mat_1 -> rows; i++){
+            for(int i = 0; i < mat_1 -> razm; i++){
                 if(i + 1 != rowIndex){
                     printf("На какой коэффициент надо умножить %d строку?\n", i + 1);
                     scanf("%d", &alpha);

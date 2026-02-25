@@ -6,8 +6,7 @@
 typedef struct {
     void* data;               // Непрерывный блок памяти для всех элементов
     size_t element_size;      // Размер одного элемента
-    size_t rows;              // Количество строк
-    size_t cols;              // Количество столбцов
+    size_t razm;              // Размерность квадратной матрицы
     
     // Функции для работы с элементами
     void (*print_element)(void*);                    // Печать элемента
@@ -15,7 +14,7 @@ typedef struct {
     void (*multiply_elements)(void*, void*, void*);  // Умножение элементов
 } Matrix;
 
-Matrix* matrix_create(size_t rows, size_t cols, size_t element_size,
+Matrix* matrix_create(size_t razm, size_t element_size,
                       void (*print_element)(void*),
                       void (*add_elements)(void*, void*, void*),
                       void (*multiply_elements)(void*, void*, void*));
