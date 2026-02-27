@@ -52,9 +52,8 @@ void push_el_matrix(Matrix* mat, void* item, int row, int col)
         return;
     }
 
-    char* target = ((char*)((mat)->data) + ((row) * (mat)->razm + (col)) * (mat)->element_size); // Итерируемся до места добавления нового элемента
-    memcpy(target, item, mat -> element_size); // Добавляем элемент
-
+    char* target = ((char*)((mat)->data) + ((row) * (mat)->razm + (col)) * (mat)->element_size); 
+    memcpy(target, item, mat -> element_size); 
     return;
 }
 

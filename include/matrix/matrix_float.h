@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 void print_float(void* element) {
-    printf("%.2f", *(float *)element);
+    printf("%4.2f", *(float *)element);
 }
 
 void add_float(void* result, void* a, void* b) {

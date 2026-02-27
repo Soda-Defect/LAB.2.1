@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -std=c99 -g
 TARGET = matrix
-OBJS = main.o matrix.o func.o
+OBJS = main.o matrix.o matrix_int.o func.o tests.o 
 
 all: $(TARGET)
 
@@ -16,6 +16,12 @@ func.o: func.c include/func.h include/matrix/matrix_complex.h include/matrix/mat
 
 matrix.o: matrix.c include/matrix/matrix.h
 	$(CC) $(CFLAGS) -c matrix.c
+
+matrix_int.o: matrix_type/matrix_int.c include/matrix/matrix_int.h
+	$(CC) $(CFLAGS) -c matrix_int.c
+
+tests.o: tests.c include/tests.h
+	$(CC) $(CFLAGS) -c tests.c
 
 test: $(TARGET)
 	./$(TARGET)
