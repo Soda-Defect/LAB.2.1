@@ -2,7 +2,7 @@
 
 #include "../include/complex.h"
 
-Complex complex_create(double real, double imag) {
+Complex complex_create(int real, int imag) {
     Complex c;
     c.real = real;
     c.imag = imag;
@@ -19,8 +19,8 @@ Complex complex_mul(Complex a, Complex b) {
 
 void complex_print(Complex c) {
     if (c.imag >= 0) {
-        printf("%.2f + %.2fi", c.real, c.imag);
+        printf("%4.d + %4.di", c.real, c.imag);
     } else {
-        printf("%.2f - %.2fi", c.real, -c.imag);
+        printf("%4.d - %4.di", c.real, -c.imag);
     }
 }

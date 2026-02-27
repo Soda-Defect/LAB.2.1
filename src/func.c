@@ -102,12 +102,12 @@ void float_input(Matrix* mat)
 
 void complex_input(Matrix* mat)
 {
-    double re, im;
+    int re, im;
     char sign, i_char;
     printf("¬ведите элементы в формате a+bi: \n");
     for(int i = 0; i < mat -> razm; i++){
         for(int j = 0; j < mat -> razm; j++){
-            scanf("%lf%c%lf%c", &re, &sign, &im, &i_char);
+            scanf("%d%c%d%c", &re, &sign, &im, &i_char);
             if(sign == '-'){
                 im *= -1;
             }
