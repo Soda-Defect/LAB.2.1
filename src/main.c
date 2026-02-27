@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <locale.h>
-#include "include/func.h"
+#include "../include/func.h"
 
 
 int main(void) {

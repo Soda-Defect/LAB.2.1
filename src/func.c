@@ -1,10 +1,10 @@
 #include <stdio.h>
-#include "include/tests.h"
-#include "include/complex.h"
-#include "include/matrix/matrix.h"
-#include "include/matrix/matrix_int.h"
-#include "include/matrix/matrix_float.h"
-#include "include/matrix/matrix_complex.h"
+#include "../include/tests.h"
+#include "../include/complex.h"
+#include "../include/matrix/matrix.h"
+#include "../include/matrix/matrix_int.h"
+#include "../include/matrix/matrix_float.h"
+#include "../include/matrix/matrix_complex.h"
 
 void print_type()
 {
