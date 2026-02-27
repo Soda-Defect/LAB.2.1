@@ -2,4 +2,4 @@
 
 make - сборка 
 
-make test - запуск
+make start - запуск

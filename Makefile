@@ -32,10 +32,10 @@ matrix_complex.o: matrix_type/matrix_complex.c include/complex.h include/matrix/
 tests.o: src/tests.c include/tests.h
 	$(CC) $(CFLAGS) -c src/tests.c
 
-test: $(TARGET)
+start: $(TARGET)
 	./$(TARGET)
 
 clean:
 	rm -f $(OBJS) $(TARGET)
 
-.PHONY: all clean test
+.PHONY: all clean start
