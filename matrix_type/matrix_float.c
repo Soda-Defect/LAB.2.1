@@ -3,7 +3,7 @@
 #include "../include/matrix/matrix_float.h"
 
 void print_float(void* element) {
-    printf("%4.2f", *(float *)element);
+    printf("%6.2f", *(float *)element);
 }
 
 void add_float(void* result, void* a, void* b) {
