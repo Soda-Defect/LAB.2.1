@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "include/tests.h"
+#include "include/complex.h"
 #include "include/matrix/matrix.h"
 #include "include/matrix/matrix_int.h"
 #include "include/matrix/matrix_float.h"
@@ -30,7 +31,6 @@ void print_menu()
     printf("2. Произведение матриц\n");
     printf("3. Транспонирование матрицы\n");
     printf("4. Прибавление к строке линейной комбинации других строк\n");
-    printf("6. Запуск теста\n");
     printf("0. Выход.\n");
     printf("===================================\n");
     printf("Ваш выбор: ");
@@ -179,9 +179,6 @@ void process(int choice, Matrix* mat_1, Matrix* mat_2)
             printf("\nПолученная Матрица: \n");
             print_matrix(mat_1);
             matrix_free(mat_1);
-            break;
-        case 6:
-            run_int_matrix();
             break;
         default:
             error_print(5);

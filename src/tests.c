@@ -2,8 +2,8 @@
 #include <assert.h>
 #include "include/matrix/matrix.h"
 #include "include/matrix/matrix_int.h"
-//#include "include/matrix/matrix_float.h"
-//#include "include/matrix/matrix_complex.h"
+#include "include/matrix/matrix_float.h"
+#include "include/matrix/matrix_complex.h"
 
 #define ASSERT_EQ(x, y) assert((x) == (y))
 
@@ -122,7 +122,7 @@ void run_int_matrix()
     matrix_add_line_comb(mat, rowIndex - 1, 1, &alpha1);
     matrix_add_line_comb(mat, rowIndex - 1, 2, &alpha2);
     print_matrix(mat);
-    
+
     ptr = (int*)element_get(mat, 0, 0);
     ptr_2 = (int*)element_get(mat_2, 0, 0);
     ptr_3 = (int*)element_get(mat_2, 1, 0);

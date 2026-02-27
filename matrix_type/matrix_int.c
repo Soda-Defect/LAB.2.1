@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include "include/matrix/matrix.h"
-#include "include/matrix/matrix_int.h"
+#include "../include/matrix/matrix.h"
+#include "../include/matrix/matrix_int.h"
 
 void print_int(void* element) {
     printf("%4.d", *(int *)element);
