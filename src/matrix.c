@@ -6,7 +6,8 @@
 Matrix* matrix_create(size_t razm, size_t element_size,
                       void (*print_element)(void*),
                       void (*add_elements)(void*, void*, void*),
-                      void (*multiply_elements)(void*, void*, void*)){
+                      void (*multiply_elements)(void*, void*, void*),
+                      void (*mult_elements_const)(void* , void* , int )){
 
     if (razm <= 0){
         error_print(2);
@@ -37,6 +38,7 @@ Matrix* matrix_create(size_t razm, size_t element_size,
     matrix->print_element = print_element;
     matrix->add_elements = add_elements;
     matrix->multiply_elements = multiply_elements;
+    matrix->mult_elements_const = mult_elements_const;
 
     return matrix;
 
@@ -80,7 +82,7 @@ Matrix* matrix_add(Matrix* mat_1, Matrix* mat_2)
         return NULL;
     }
 
-    Matrix* result = matrix_create(mat_1 -> razm, mat_1 -> element_size, mat_1 -> print_element, mat_1 -> add_elements, mat_1 ->multiply_elements);
+    Matrix* result = matrix_create(mat_1 -> razm, mat_1 -> element_size, mat_1 -> print_element, mat_1 -> add_elements, mat_1 ->multiply_elements, mat_1 -> mult_elements_const);
     if (result == NULL) {
         return NULL;
     }
@@ -115,7 +117,7 @@ Matrix* matrix_mult(Matrix* mat_1, Matrix* mat_2)
         return NULL;
     }
 
-    Matrix* result = matrix_create(mat_1 -> razm, mat_1 -> element_size, mat_1 -> print_element, mat_1 -> add_elements, mat_1 ->multiply_elements);
+    Matrix* result = matrix_create(mat_1 -> razm, mat_1 -> element_size, mat_1 -> print_element, mat_1 -> add_elements, mat_1 -> multiply_elements, mat_1 -> mult_elements_const);
     if (result == NULL) {
         return NULL;
     }
@@ -152,7 +154,7 @@ Matrix* matrix_transp(Matrix* mat_1)
         return NULL;
     }
 
-    Matrix* result = matrix_create(mat_1 -> razm, mat_1 -> element_size, mat_1 -> print_element, mat_1 -> add_elements, mat_1 ->multiply_elements);
+    Matrix* result = matrix_create(mat_1 -> razm, mat_1 -> element_size, mat_1 -> print_element, mat_1 -> add_elements, mat_1 ->multiply_elements, mat_1 -> mult_elements_const);
     if (result == NULL) {
         return NULL;
     }
@@ -167,25 +169,19 @@ Matrix* matrix_transp(Matrix* mat_1)
     return result;
 }
 
-void matrix_add_line_comb(Matrix* mat_1, int rowIndex, int rowAlph, void* alhpa)
+void matrix_multiply_const(Matrix* mat_1, int alhpa)
 {
-    if(mat_1 == NULL || mat_1 -> add_elements == NULL || mat_1 -> multiply_elements == NULL){
+    if(mat_1 == NULL || mat_1 -> mult_elements_const == NULL){
         return;
     }
 
-    for(int j = 0; j < mat_1 -> razm; j++){
-        void* elem_1 = element_get(mat_1, rowIndex, j);
-        void* elem_2 = element_get(mat_1, rowAlph, j);
-
-        void* mult = malloc(mat_1 -> element_size);
-        if(mult == NULL){
-            return;
+    for(int i = 0; i < mat_1 -> razm; i++){
+        for(int j = 0; j < mat_1 -> razm; j++){
+            void* elem_1 = element_get(mat_1, i, j);
+            mat_1 -> mult_elements_const(elem_1, elem_1, alhpa);
+            push_el_matrix(mat_1, elem_1, i, j);
         }
-        mat_1 -> multiply_elements(mult, alhpa, elem_2);
-        mat_1 -> add_elements(elem_1, elem_1, mult);
-        push_el_matrix(mat_1, elem_1, rowIndex, j);
     }
-
 }
 
 void print_matrix(Matrix* mat) {

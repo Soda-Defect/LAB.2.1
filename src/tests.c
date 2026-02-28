@@ -108,7 +108,7 @@ void run_int_matrix()
         }
     }
 
-    printf("Прибавление к строке 1 линейной комбинации строк, умноженных на 2 и 1\n");
+    printf("Умножение на скаляр 3\n");
     mat_2 = create_int_matrix(3);
     k = 0;
     for(int i = 0; i < mat_2->razm; i++){
@@ -118,27 +118,16 @@ void run_int_matrix()
             push_el_matrix(mat_2, &elem, i, j);
         }
     }
-    int rowIndex = 1;
-    int alpha1 = 2, alpha2 = 1;
-    matrix_add_line_comb(mat, rowIndex - 1, 1, &alpha1);
-    matrix_add_line_comb(mat, rowIndex - 1, 2, &alpha2);
+    matrix_multiply_const(mat, 3);
     print_matrix(mat);
 
-    ptr = (int*)element_get(mat, 0, 0);
-    ptr_2 = (int*)element_get(mat_2, 0, 0);
-    ptr_3 = (int*)element_get(mat_2, 1, 0);
-    ptr_4 = (int*)element_get(mat_2, 2, 0);
-    ASSERT_EQ(*ptr, *ptr_2 + *ptr_3 * 2 + *ptr_4);
-    ptr = (int*)element_get(mat, 0, 1);
-    ptr_2 = (int*)element_get(mat_2, 0, 1);
-    ptr_3 = (int*)element_get(mat_2, 1, 1);
-    ptr_4 = (int*)element_get(mat_2, 2, 1);
-    ASSERT_EQ(*ptr, *ptr_2 + *ptr_3 * 2 + *ptr_4);
-    ptr = (int*)element_get(mat, 0, 2);
-    ptr_2 = (int*)element_get(mat_2, 0, 2);
-    ptr_3 = (int*)element_get(mat_2, 1, 2);
-    ptr_4 = (int*)element_get(mat_2, 2, 2);
-    ASSERT_EQ(*ptr, *ptr_2 + *ptr_3 * 2 + *ptr_4);
+    for(int i = 0; i < mat -> razm; i++){
+        for(int j = 0; j < mat -> razm; j++){
+            ptr = (int*)element_get(mat, i, j);
+            ptr_2 = (int*)element_get(mat_2, i, j);
+            ASSERT_EQ(*ptr, *ptr_2 * 3);
+        }
+    }
 
     matrix_free(mat_2);
     matrix_free(mat);
@@ -246,7 +235,7 @@ void run_float_matrix()
         }
     }
 
-    printf("Прибавление к строке 1 линейной комбинации строк, умноженных на 2.00 и 1.00\n");
+    printf("Умножение на скаляр 3\n");
     mat_2 = create_float_matrix(3);
     k = 0;
     for(int i = 0; i < mat_2->razm; i++){
@@ -256,30 +245,16 @@ void run_float_matrix()
             push_el_matrix(mat_2, &elem, i, j);
         }
     }
-    int rowIndex = 1;
-    float alpha1 = 2.00, alpha2 = 1.00;
-    matrix_add_line_comb(mat, rowIndex - 1, 1, &alpha1);
-    matrix_add_line_comb(mat, rowIndex - 1, 2, &alpha2);
+    matrix_multiply_const(mat, 3);
     print_matrix(mat);
 
-    ptr = (float*)element_get(mat, 0, 0);
-    ptr_2 = (float*)element_get(mat_2, 0, 0);
-    ptr_3 = (float*)element_get(mat_2, 1, 0);
-    ptr_4 = (float*)element_get(mat_2, 2, 0);
-    printf("%.6f %.6f\n", *ptr, *ptr_2 + *ptr_3 * 2.00 + *ptr_4 * 1.00);
-    //ASSERT_EQ(*ptr, *ptr_2 + *ptr_3 * 2.00 + *ptr_4 * 1.00);
-    ptr = (float*)element_get(mat, 0, 1);
-    ptr_2 = (float*)element_get(mat_2, 0, 1);
-    ptr_3 = (float*)element_get(mat_2, 1, 1);
-    ptr_4 = (float*)element_get(mat_2, 2, 1);
-    printf("%.6f %.6f\n", *ptr, *ptr_2 + *ptr_3 * 2.00 + *ptr_4 * 1.00);
-    //ASSERT_EQ(*ptr, *ptr_2 + *ptr_3 * 2.00 + *ptr_4 * 1.00);
-    ptr = (float*)element_get(mat, 0, 2);
-    ptr_2 = (float*)element_get(mat_2, 0, 2);
-    ptr_3 = (float*)element_get(mat_2, 1, 2);
-    ptr_4 = (float*)element_get(mat_2, 2, 2);
-    printf("%.8f %.8f\n", *ptr, *ptr_2 + *ptr_3 * 2.00 + *ptr_4 * 1.00);
-    //ASSERT_EQ(*ptr, *ptr_2 + *ptr_3 * 2.00 + *ptr_4 * 1.00);
+    for(int i = 0; i < mat -> razm; i++){
+        for(int j = 0; j < mat -> razm; j++){
+            ptr = (float*)element_get(mat, i, j);
+            ptr_2 = (float*)element_get(mat_2, i, j);
+            ASSERT_EQ(*ptr, *ptr_2 * 3);
+        }
+    }
 
     matrix_free(mat_2);
     matrix_free(mat);
@@ -325,7 +300,7 @@ void run_complex_matrix()
     }
 
     printf("Создание второй матрицы 3x3\n");
-    Matrix* mat_2 = create_int_matrix(3);
+    Matrix* mat_2 = create_complex_matrix(3);
     assert(mat_2 != NULL);
     ASSERT_EQ(mat_2->razm, 3);
 
@@ -340,7 +315,7 @@ void run_complex_matrix()
             elem_im_2 = array_im_2[k];
             k++;
             Complex c = complex_create(elem_re_2, elem_im_2);
-            push_el_matrix(mat, &c, i, j);
+            push_el_matrix(mat_2, &c, i, j);
         }
     }
     print_matrix(mat_2);
@@ -350,12 +325,11 @@ void run_complex_matrix()
             elem_re_2 = array_re_2[k];
             elem_im_2 = array_im_2[k];
             k++;
-            ptr = (Complex*)element_get(mat, i, j);
+            ptr = (Complex*)element_get(mat_2, i, j);
             ASSERT_EQ(ptr->real, elem_re_2);
             ASSERT_EQ(ptr->imag, elem_im_2);
         }
     }
-    //a.real * b.real - a.imag * b.imag, a.real * b.imag + b.real * a.imag
 
     printf("Умножение матриц\n");
     Matrix* mult = matrix_mult(mat, mat_2);
@@ -403,8 +377,8 @@ void run_complex_matrix()
         }
     }
 
-    printf("Прибавление к строке 1 линейной комбинации строк, умноженных на 2 и 1\n");
-    mat_2 = create_int_matrix(3);
+    printf("Умножение на скаляр 3\n");
+    mat_2 = create_complex_matrix(3);
     k = 0;
     for(int i = 0; i < mat_2->razm; i++){
         for(int j = 0; j < mat_2->razm; j++){
@@ -415,27 +389,17 @@ void run_complex_matrix()
             push_el_matrix(mat_2, &c, i, j);
         }
     }
-    int rowIndex = 1;
-    int alpha1 = 2, alpha2 = 1;
-    matrix_add_line_comb(mat, rowIndex - 1, 1, &alpha1);
-    matrix_add_line_comb(mat, rowIndex - 1, 2, &alpha2);
+    matrix_multiply_const(mat, 3);
     print_matrix(mat);
 
-    ptr = (Complex*)element_get(mat, 0, 0);
-    ptr_2 = (Complex*)element_get(mat_2, 0, 0);
-    ptr_3 = (Complex*)element_get(mat_2, 1, 0);
-    ptr_4 = (Complex*)element_get(mat_2, 2, 0);
-    ASSERT_EQ(*ptr, *ptr_2 + *ptr_3 * 2 + *ptr_4);
-    ptr = (Complex*)element_get(mat, 0, 1);
-    ptr_2 = (Complex*)element_get(mat_2, 0, 1);
-    ptr_3 = (Complex*)element_get(mat_2, 1, 1);
-    ptr_4 = (Complex*)element_get(mat_2, 2, 1);
-    ASSERT_EQ(*ptr, *ptr_2 + *ptr_3 * 2 + *ptr_4);
-    ptr = (Complex*)element_get(mat, 0, 2);
-    ptr_2 = (Complex*)element_get(mat_2, 0, 2);
-    ptr_3 = (Complex*)element_get(mat_2, 1, 2);
-    ptr_4 = (Complex*)element_get(mat_2, 2, 2);
-    ASSERT_EQ(*ptr, *ptr_2 + *ptr_3 * 2 + *ptr_4);
+    for(int i = 0; i < mat -> razm; i++){
+        for(int j = 0; j < mat -> razm; j++){
+            ptr = (Complex*)element_get(mat, i, j);
+            ptr_2 = (Complex*)element_get(mat_2, i, j);
+            ASSERT_EQ(ptr->real, ptr_2->real * 3);
+            ASSERT_EQ(ptr->imag, ptr_2->imag * 3);
+        }
+    }
 
     matrix_free(mat_2);
     matrix_free(mat);
@@ -447,4 +411,5 @@ void run_all_matrix()
 {
     run_int_matrix();
     run_float_matrix();
+    run_complex_matrix();
 }

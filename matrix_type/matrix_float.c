@@ -14,6 +14,10 @@ void mult_float(void* result, void* a, void* b) {
     *(float *)result = (*(float *)a * *(float *)b);
 }
 
+void mult_float_const(void* result, void* a, int b) {
+    *(float *)result = (*(float *)a * b);
+}
+
 Matrix* create_float_matrix(size_t razm) {
-    return matrix_create(razm, sizeof(float), print_float, add_float, mult_float);
+    return matrix_create(razm, sizeof(float), print_float, add_float, mult_float, mult_float_const);
 }

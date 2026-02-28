@@ -19,8 +19,8 @@ Complex complex_mul(Complex a, Complex b) {
 
 void complex_print(Complex c) {
     if (c.imag >= 0) {
-        printf("%4.d + %4.di", c.real, c.imag);
+        printf("%.d + %.di", c.real, c.imag);
     } else {
-        printf("%4.d - %4.di", c.real, -c.imag);
+        printf("%.d - %.di", c.real, -c.imag);
     }
 }

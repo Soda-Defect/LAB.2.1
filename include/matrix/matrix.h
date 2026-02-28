@@ -12,18 +12,20 @@ typedef struct {
     void (*print_element)(void*);                    // Печать элемента
     void (*add_elements)(void*, void*, void*);       // Сложение элементов
     void (*multiply_elements)(void*, void*, void*);  // Умножение элементов
+    void (*mult_elements_const)(void* , void* , int ); //Умножение элементов на скаляр
 } Matrix;
 
 Matrix* matrix_create(size_t razm, size_t element_size,
                       void (*print_element)(void*),
                       void (*add_elements)(void*, void*, void*),
-                      void (*multiply_elements)(void*, void*, void*));
+                      void (*multiply_elements)(void*, void*, void*),
+                      void (*mult_elements_const)(void* , void* , int ));
 void push_el_matrix(Matrix* mat, void* item, int row, int col);
 void* element_get(Matrix* mat, int row, int col);
 Matrix* matrix_add(Matrix* mat_1, Matrix* mat_2);
 Matrix* matrix_mult(Matrix* mat_1, Matrix* mat_2);
 Matrix* matrix_transp(Matrix* mat_1);
-void matrix_add_line_comb(Matrix* mat_1, int rowIndex, int rowAlph, void* alhpa);
+void matrix_multiply_const(Matrix* mat_1, int alhpa);
 void print_matrix(Matrix* mat);
 void matrix_free(Matrix* mat);
 

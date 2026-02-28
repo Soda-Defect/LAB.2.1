@@ -30,7 +30,7 @@ void print_menu()
     printf("1. Сложение матриц\n");
     printf("2. Произведение матриц\n");
     printf("3. Транспонирование матрицы\n");
-    printf("4. Прибавление к строке линейной комбинации других строк\n");
+    printf("4. Умножение на скаляр\n");
     printf("0. Выход.\n");
     printf("===================================\n");
     printf("Ваш выбор: ");
@@ -157,25 +157,10 @@ void process(int choice, Matrix* mat_1, Matrix* mat_2)
             matrix_free(transp);
             break;
         case 4:
-            int rowIndex;
-            printf("К какой строке прибавить комбинацию?\n");
-            scanf("%d", &rowIndex);
-            if(rowIndex <= 0){
-                error_print(10);
-                break;
-            }
-            if(rowIndex > mat_1 -> razm){
-                error_print(11);
-                break;
-            }
             int alpha;
-            for(int i = 0; i < mat_1 -> razm; i++){
-                if(i + 1 != rowIndex){
-                    printf("На какой коэффициент надо умножить %d строку?\n", i + 1);
-                    scanf("%d", &alpha);
-                    matrix_add_line_comb(mat_1, rowIndex - 1, i, &alpha);
-                }
-            }
+            printf("На какое число умножить?\n");
+            scanf("%d", &alpha);
+            matrix_multiply_const(mat_1, alpha);
             printf("\nПолученная Матрица: \n");
             print_matrix(mat_1);
             matrix_free(mat_1);
