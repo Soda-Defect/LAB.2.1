@@ -177,15 +177,19 @@ int process_types(int type)
     Matrix* mat_1 = NULL;
     Matrix* mat_2 = NULL;
 
-    if(type != 4 && type != 0){
+    if(type >= 1 && type <= 3){
         print_menu();
         scanf("%d", &choice);
-        if(choice == 0){
-            type = 0;
-        }
-        else{
+        if(choice >= 1 && choice <= 4){
             printf("¬ведите размерность квадратной матрицы\n");
             scanf("%d", &razm);
+        }
+        else{
+            if(choice == 0){
+                type = 0;
+            }
+            error_print(5);
+            return type;
         }
     }
 
@@ -241,7 +245,7 @@ int process_types(int type)
             return type;
         default:
             error_print(5);
-            break;
+            return type;
     }
 
     process(choice, mat_1, mat_2);
