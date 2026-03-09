@@ -15,7 +15,7 @@ typedef struct {
     void (*mult_elements_const)(void* , void* , int ); //Умножение элементов на скаляр
 } Matrix;
 
-Matrix* matrix_create(size_t razm, size_t element_size,
+Matrix* matrix_create(int razm, size_t element_size,
                       void (*print_element)(void*),
                       void (*add_elements)(void*, void*, void*),
                       void (*multiply_elements)(void*, void*, void*),

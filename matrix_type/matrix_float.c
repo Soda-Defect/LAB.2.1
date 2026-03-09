@@ -18,6 +18,6 @@ void mult_float_const(void* result, void* a, int b) {
     *(float *)result = (*(float *)a * b);
 }
 
-Matrix* create_float_matrix(size_t razm) {
+Matrix* create_float_matrix(int razm) {
     return matrix_create(razm, sizeof(float), print_float, add_float, mult_float, mult_float_const);
 }

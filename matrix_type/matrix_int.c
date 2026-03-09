@@ -18,6 +18,6 @@ void mult_int_const(void* result, void* a, int b) {
     *(int *)result = (*(int *)a * b);
 }
 
-Matrix* create_int_matrix(size_t razm) {
+Matrix* create_int_matrix(int razm) {
     return matrix_create(razm, sizeof(int), print_int, add_int, mult_int, mult_int_const);
 }

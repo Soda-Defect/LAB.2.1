@@ -30,6 +30,6 @@ void mult_complex_const(void* result, void* a, int b) {
     res->imag =c1->imag  * b;
 }
 
-Matrix* create_complex_matrix(size_t razm) {
+Matrix* create_complex_matrix(int razm) {
     return matrix_create(razm, sizeof(Complex), print_complex, add_complex, mult_complex, mult_complex_const);
 }

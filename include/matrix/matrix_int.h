@@ -5,6 +5,6 @@ inline void print_int(void* element);
 inline void add_int(void* result, void* a, void* b);
 inline void mult_int(void* result, void* a, void* b);
 void mult_int_const(void* result, void* a, int b);
-Matrix* create_int_matrix(size_t razm);
+Matrix* create_int_matrix(int razm);
 
 #endif //MATRIX_INT_H
