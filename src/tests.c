@@ -132,6 +132,38 @@ void run_int_matrix()
     matrix_free(mat_2);
     matrix_free(mat);
 
+    printf("\n=== Обработка ошибок ===\n");
+
+    printf("\nПопытка создать матрицу с отрицательным размером\n");
+    mat = create_int_matrix(-3);
+    ASSERT_EQ(mat, NULL);
+
+    printf("\nПопытка занести в матрицу элемент в несуществующую ячейку [-1][-2]\n");
+    mat = create_int_matrix(3);
+    push_el_matrix(mat, &elem, -1, -2);
+    printf("\nПопытка занести в матрицу элемент в несуществующую ячейку [4][4]\n");
+    push_el_matrix(mat, &elem, 4, 4);
+
+    printf("\nПопытка узнать элемент матрицы из несуществующей ячейки [-1][-2]\n");
+    (int*)element_get(mat, -1, -2);
+    printf("\nПопытка узнать элемент матрицы из несуществующей ячейки [4][4]\n");
+    (int*)element_get(mat, 4, 4);
+
+    printf("\nПопытка сложить матрицы разной размерности\n");
+    mat_2 = create_int_matrix(4);
+    sum = matrix_add(mat, mat_2);
+    ASSERT_EQ(sum, NULL);
+
+    printf("\nПопытка умножить матрицы разной размерности\n");
+    mult = matrix_mult(mat, mat_2);
+    ASSERT_EQ(mult, NULL);
+
+    matrix_free(mat_2);
+    matrix_free(mat);
+    matrix_free(sum);
+    matrix_free(mult);
+    matrix_free(transp);
+
     printf("\n=== Тестирование матрицы целых чисел закончен ===\n");
 }
 
@@ -258,6 +290,38 @@ void run_float_matrix()
 
     matrix_free(mat_2);
     matrix_free(mat);
+
+    printf("\n=== Обработка ошибок ===\n");
+
+    printf("\nПопытка создать матрицу с отрицательным размером\n");
+    mat = create_float_matrix(-3);
+    ASSERT_EQ(mat, NULL);
+
+    printf("\nПопытка занести в матрицу элемент в несуществующую ячейку [-1][-2]\n");
+    mat = create_float_matrix(3);
+    push_el_matrix(mat, &elem, -1, -2);
+    printf("\nПопытка занести в матрицу элемент в несуществующую ячейку [4][4]\n");
+    push_el_matrix(mat, &elem, 4, 4);
+
+    printf("\nПопытка узнать элемент матрицы из несуществующей ячейки [-1][-2]\n");
+    (float*)element_get(mat, -1, -2);
+    printf("\nПопытка узнать элемент матрицы из несуществующей ячейки [4][4]\n");
+    (float*)element_get(mat, 4, 4);
+
+    printf("\nПопытка сложить матрицы разной размерности\n");
+    mat_2 = create_float_matrix(4);
+    sum = matrix_add(mat, mat_2);
+    ASSERT_EQ(sum, NULL);
+
+    printf("\nПопытка умножить матрицы разной размерности\n");
+    mult = matrix_mult(mat, mat_2);
+    ASSERT_EQ(mult, NULL);
+
+    matrix_free(mat_2);
+    matrix_free(mat);
+    matrix_free(sum);
+    matrix_free(mult);
+    matrix_free(transp);
 
     printf("\n=== Тестирование матрицы вещественных чисел закончен ===\n");
 }
@@ -403,6 +467,39 @@ void run_complex_matrix()
 
     matrix_free(mat_2);
     matrix_free(mat);
+
+    printf("\n=== Обработка ошибок ===\n");
+
+    printf("\nПопытка создать матрицу с отрицательным размером\n");
+    mat = create_complex_matrix(-3);
+    ASSERT_EQ(mat, NULL);
+
+    printf("\nПопытка занести в матрицу элемент в несуществующую ячейку [-1][-2]\n");
+    mat = create_complex_matrix(3);
+    Complex c = complex_create(elem_re, elem_im);
+    push_el_matrix(mat, &c, -1, -2);
+    printf("\nПопытка занести в матрицу элемент в несуществующую ячейку [4][4]\n");
+    push_el_matrix(mat, &c, 4, 4);
+
+    printf("\nПопытка узнать элемент матрицы из несуществующей ячейки [-1][-2]\n");
+    (Complex*)element_get(mat, -1, -2);
+    printf("\nПопытка узнать элемент матрицы из несуществующей ячейки [4][4]\n");
+    (Complex*)element_get(mat, 4, 4);
+
+    printf("\nПопытка сложить матрицы разной размерности\n");
+    mat_2 = create_complex_matrix(4);
+    sum = matrix_add(mat, mat_2);
+    ASSERT_EQ(sum, NULL);
+
+    printf("\nПопытка умножить матрицы разной размерности\n");
+    mult = matrix_mult(mat, mat_2);
+    ASSERT_EQ(mult, NULL);
+
+    matrix_free(mat_2);
+    matrix_free(mat);
+    matrix_free(sum);
+    matrix_free(mult);
+    matrix_free(transp);
 
     printf("\n=== Тестирование матрицы комплексных чисел закончен ===\n");
 }
