@@ -9,7 +9,7 @@ int main(void) {
     int type;
     do {
         print_type();
-        scanf("%d", &type);
+        type = int_input_value("Ваш выбор: ");
         type = process_types(type);
     } while (type != 0);
 }
