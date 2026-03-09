@@ -13,7 +13,7 @@ void print_type()
     printf("===================================\n");
     printf("           ТИПЫ ДАННЫХ             \n");
     printf("1. Работа с матрицей целых чисел.\n");
-    printf("2. Работа с матрицей дробных чисел.\n");
+    printf("2. Работа с матрицей вещественных чисел.\n");
     printf("3. Работа с матрицей комплексных чисел.\n");
     printf("4. Запуск тестов со всеми типами.\n");
     printf("0. Выход.\n");
@@ -73,17 +73,40 @@ void error_print(int error)
         case 11:
             printf("ОШИБКА: Номер строки не может быть больше максимального номера строки матрицы!\n");
             break;
+        case 12:
+            printf("ОШИБКА: Нужно вводить целое число!\n");
+            break;
+        case 13:
+            printf("ОШИБКА: Нужно вводить вещественное число!\n");
+            break;
+        case 14:
+            printf("ОШИБКА: Нужно вводить комплексное в формате a+bi число!\n");
+            break;
     }
+}
+
+void clearInputBuffer() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
 }
 
 void int_input(Matrix* mat)
 {
-    int value;
-    printf("Введите элементы:\n");
+    int value, success;
+    char term;
     for(int i = 0; i < mat -> razm; i++){
         for(int j = 0; j < mat -> razm; j++){
-            scanf("%d", &value);
-            push_el_matrix(mat, &value, i, j);
+            do{
+                success = 0;
+                printf("Введите элемент[%d][%d] целого типа:\n", i, j);
+                if (scanf("%d%c", &value, &term) == 2 && term == '\n') {
+                    success = 1;
+                    push_el_matrix(mat, &value, i, j);
+                } else {
+                    error_print(12);
+                    clearInputBuffer();
+                }
+            }while(!success);
         }
     }
 }
@@ -91,32 +114,50 @@ void int_input(Matrix* mat)
 void float_input(Matrix* mat)
 {
     float value;
-    printf("Введите элементы:\n");
+    int success;
+    char term;
     for(int i = 0; i < mat -> razm; i++){
         for(int j = 0; j < mat -> razm; j++){
-            scanf("%f", &value);
-            push_el_matrix(mat, &value, i, j);
+            do{
+                success = 0;
+                printf("Введите элемент[%d][%d] вещественного типа:\n", i, j);
+                if (scanf("%f%c", &value, &term) == 2 && term == '\n') {
+                    success = 1;
+                    push_el_matrix(mat, &value, i, j);
+                } else {
+                    error_print(13);
+                    clearInputBuffer();
+                }
+            }while(!success);
         }
     }
 }
 
 void complex_input(Matrix* mat)
 {
-    int re, im;
-    char sign, i_char;
-    printf("Введите элементы в формате a+bi: \n");
+    int re, im, success;
+    char sign, i_char, term;
     for(int i = 0; i < mat -> razm; i++){
         for(int j = 0; j < mat -> razm; j++){
-            scanf("%d%c%d%c", &re, &sign, &im, &i_char);
-            if(sign == '-'){
-                im *= -1;
-            }
-            if(i_char != 'i'){
-                error_print(7);
-            }
-            Complex c = complex_create(re, im);
-            push_el_matrix(mat, &c, i, j);
-            
+            do{
+                success = 0;
+                printf("Введите элемент[%d][%d] в формате a+bi: \n", i, j);
+                if (scanf("%d%c%d%c%c", &re, &sign, &im, &i_char, &term) == 5 && term == '\n'){
+                    if(i_char != 'i'){
+                        error_print(7);
+                    }else {
+                        if(sign == '-'){
+                        im *= -1;
+                        }
+                        Complex c = complex_create(re, im);
+                        push_el_matrix(mat, &c, i, j);
+                        success = 1;
+                        }
+                }else {
+                    error_print(14);
+                    clearInputBuffer();
+                }
+            }while(!success);   
         }
     }
 }
