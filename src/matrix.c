@@ -184,10 +184,11 @@ void matrix_multiply_const(Matrix* mat_1, int alhpa)
     }
 }
 
-void print_matrix(Matrix* mat) {
+char* print_matrix(Matrix* mat) {
     if (mat == NULL || mat -> print_element == NULL) {
         return;
     }
+    char* text = (char*)malloc(500);
     for(int i = 0; i < mat->razm; i++){
         printf("|");
         for(int j = 0; j < mat->razm; j++){

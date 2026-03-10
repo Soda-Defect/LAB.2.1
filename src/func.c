@@ -180,6 +180,7 @@ const char* process(int choice, Matrix* mat_1, Matrix* mat_2)
     if(choice == 0){
         return error_print(1);
     }
+    char* text = (char*)malloc(500);
 
     switch (choice)
     {
@@ -187,7 +188,7 @@ const char* process(int choice, Matrix* mat_1, Matrix* mat_2)
             return error_print(1);
         case 1:
             Matrix* sum = matrix_add(mat_1, mat_2);
-            printf("\nПолученная Матрица: \n");
+            strcat(text, "\nПолученная Матрица: \n");
             print_matrix(sum);
             matrix_free(mat_1);
             matrix_free(mat_2);
@@ -195,7 +196,7 @@ const char* process(int choice, Matrix* mat_1, Matrix* mat_2)
             break;
         case 2:
             Matrix* mult = matrix_mult(mat_1, mat_2);
-            printf("\nПолученная Матрица: \n");
+            strcat(text, "\nПолученная Матрица: \n");
             print_matrix(mult);
             matrix_free(mat_1);
             matrix_free(mat_2);
@@ -203,7 +204,7 @@ const char* process(int choice, Matrix* mat_1, Matrix* mat_2)
             break;
         case 3:
             Matrix* transp = matrix_transp(mat_1);
-            printf("\nПолученная Матрица: \n");
+            strcat(text, "\nПолученная Матрица: \n");
             print_matrix(transp);
             matrix_free(mat_1);
             matrix_free(transp);
@@ -212,12 +213,12 @@ const char* process(int choice, Matrix* mat_1, Matrix* mat_2)
             int alpha;
             alpha = int_input_value("На какое число умножить?\n");
             matrix_multiply_const(mat_1, alpha);
-            printf("\nПолученная Матрица: \n");
+            strcat(text, "\nПолученная Матрица: \n");
             print_matrix(mat_1);
             matrix_free(mat_1);
             break;
         default:
-            error_print(5);
+            return error_print(5);
             break;
     }
 }
