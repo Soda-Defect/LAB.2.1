@@ -222,7 +222,7 @@ const char* process(int choice, Matrix* mat_1, Matrix* mat_2)
     }
 }
 
-int process_types(int type, int choice)
+const char* process_types(int type, int choice)
 {
     int razm;
     Matrix* mat_1 = NULL;

@@ -14,14 +14,22 @@ int main(void) {
         print_message(print_type());
         type = int_input_value("Ваш выбор: ");
         if(type == 0){
-            error_print(1);
+            print_message(error_print(1));
         }
-        if(type >= 0 && type <= 4){
+        else if(type > 0 && type < 5){
             print_message(print_menu());
             choice = int_input_value("Ваш выбор: ");
-            process_types(type, choice);
+            if(choice == 0){
+                print_message(error_print(1));
+            }
+            else if(choice > 0 && choice < 5){
+                process_types(type, choice);
+            }
+            else{
+                print_message(error_print(5));
+            }
         }else{
-            error_print(5);
+            print_message(error_print(5));
         }
-    } while (type != 0);
+    } while (type != 0 && choice != 0);
 }
