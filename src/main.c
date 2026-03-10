@@ -2,14 +2,26 @@
 #include <locale.h>
 #include "../include/func.h"
 
+void print_message(char* msg){
+    printf("%s\n", msg);
+}
 
 int main(void) {
     char *locale = setlocale(LC_ALL, "");
 
-    int type;
+    int type, choice;
     do {
-        print_type();
+        print_message(print_type());
         type = int_input_value("Ваш выбор: ");
-        type = process_types(type);
+        if(type == 0){
+            error_print(1);
+        }
+        if(type >= 0 && type <= 4){
+            print_message(print_menu());
+            choice = int_input_value("Ваш выбор: ");
+            process_types(type, choice);
+        }else{
+            error_print(5);
+        }
     } while (type != 0);
 }

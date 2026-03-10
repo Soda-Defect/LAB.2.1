@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include "../include/tests.h"
 #include "../include/complex.h"
 #include "../include/matrix/matrix.h"
@@ -6,80 +7,76 @@
 #include "../include/matrix/matrix_float.h"
 #include "../include/matrix/matrix_complex.h"
 
-void print_type()
+char* print_type()
 {
-    printf("\n===================================\n");
-    printf("        КОНСОЛЬНОЕ МЕНЮ            \n");
-    printf("===================================\n");
-    printf("           ТИПЫ ДАННЫХ             \n");
-    printf("1. Работа с матрицей целых чисел.\n");
-    printf("2. Работа с матрицей вещественных чисел.\n");
-    printf("3. Работа с матрицей комплексных чисел.\n");
-    printf("4. Запуск тестов со всеми типами.\n");
-    printf("0. Выход.\n");
-    printf("===================================\n");
+    char* text = (char*)malloc(500); 
+    if (text == NULL){
+        return NULL;
+    }
+    strcpy(text, "\n===================================\n");
+    strcat(text, "        КОНСОЛЬНОЕ МЕНЮ            \n");
+    strcat(text, "===================================\n");
+    strcat(text, "           ТИПЫ ДАННЫХ             \n");
+    strcat(text, "1. Работа с матрицей целых чисел.\n");
+    strcat(text, "2. Работа с матрицей вещественных чисел.\n");
+    strcat(text, "3. Работа с матрицей комплексных чисел.\n");
+    strcat(text, "4. Запуск тестов со всеми типами.\n");
+    strcat(text, "0. Выход.\n");
+    strcat(text, "===================================\n");
+    return text;
 }
 
-void print_menu()
+char* print_menu()
 {
-    printf("\n===================================\n");
-    printf("        КОНСОЛЬНОЕ МЕНЮ            \n");
-    printf("===================================\n");
-    printf("       Квадратная матрица          \n");
-    printf("1. Сложение матриц\n");
-    printf("2. Произведение матриц\n");
-    printf("3. Транспонирование матрицы\n");
-    printf("4. Умножение на скаляр\n");
-    printf("0. Выход.\n");
-    printf("===================================\n");
+    char* text = (char*)malloc(500); 
+    if (text == NULL){
+        return NULL;
+    }
+    strcpy(text, "\n===================================\n");
+    strcat(text, "        КОНСОЛЬНОЕ МЕНЮ            \n");
+    strcat(text, "===================================\n");
+    strcat(text, "       Квадратная матрица          \n");
+    strcat(text, "1. Сложение матриц\n");
+    strcat(text, "2. Произведение матриц\n");
+    strcat(text, "3. Транспонирование матрицы\n");
+    strcat(text, "4. Умножение на скаляр\n");
+    strcat(text, "0. Выход.\n");
+    strcat(text, "===================================\n");
+    return text;
 }
 
-void error_print(int error)
+const char* error_print(int error)
 {
     switch(error)
     {
         case 1:
-            printf("Выход из программы!\n");
-            break;
+            return "Выход из программы!\n";
         case 2:
-            printf("ОШИБКА: Размер матрицы должен быть положительным!\n");
-            break;
+            return "ОШИБКА: Размер матрицы должен быть положительным!\n";
         case 3:
-            printf("Ошибка выделения памяти для матрицы!\n");
-            break;
+            return "Ошибка выделения памяти для матрицы!\n";
         case 4:
-            printf("ОШИБКА: Размер элемента должен быть больше нуля!\n");
-            break;
+            return "ОШИБКА: Размер элемента должен быть больше нуля!\n";
         case 5:
-            printf("Неправильный выбор! Выберите действие из представленных в меню!\n");
-            break;
+            return "Неправильный выбор! Выберите действие из представленных в меню!\n";
         case 6:
-            printf("ОШИБКА: Указанный номер не входит в диапазон размера!\n");
-            break;
+            return "ОШИБКА: Указанный номер не входит в диапазон размера!\n";
         case 7:
-            printf("ОШИБКА: Отсутствует i в комплексном числе!\n");
-            break;
+            return "ОШИБКА: Отсутствует i в комплексном числе!\n";
         case 8:
-            printf("ОШИБКА: Для сложения матрицы должны быть одинаковой размерности!\n");
-            break;
+            return "ОШИБКА: Для сложения матрицы должны быть одинаковой размерности!\n";
         case 9:
-            printf("ОШИБКА: Для произведения размерности матриц должны быть одинаковы!\n");
-            break;
+            return "ОШИБКА: Для произведения размерности матриц должны быть одинаковы!\n";
         case 10:
-            printf("ОШИБКА: Номер строки должен быть больше нуля!\n");
-            break;
+            return "ОШИБКА: Номер строки должен быть больше нуля!\n";
         case 11:
-            printf("ОШИБКА: Номер строки не может быть больше максимального номера строки матрицы!\n");
-            break;
+            return "ОШИБКА: Номер строки не может быть больше максимального номера строки матрицы!\n";
         case 12:
-            printf("ОШИБКА: Нужно вводить целое число!\n");
-            break;
+            return "ОШИБКА: Нужно вводить целое число!\n";
         case 13:
-            printf("ОШИБКА: Нужно вводить вещественное число!\n");
-            break;
+            return "ОШИБКА: Нужно вводить вещественное число!\n";
         case 14:
-            printf("ОШИБКА: Нужно вводить комплексное в формате a+bi число!\n");
-            break;
+            return "ОШИБКА: Нужно вводить комплексное в формате a+bi число!\n";
     }
 }
 
@@ -178,18 +175,16 @@ void complex_input(Matrix* mat)
     }
 }
 
-void process(int choice, Matrix* mat_1, Matrix* mat_2)
+const char* process(int choice, Matrix* mat_1, Matrix* mat_2)
 {
     if(choice == 0){
-        error_print(1);
-        return;
+        return error_print(1);
     }
 
     switch (choice)
     {
         case 0:
-            error_print(1);
-            return;
+            return error_print(1);
         case 1:
             Matrix* sum = matrix_add(mat_1, mat_2);
             printf("\nПолученная Матрица: \n");
@@ -227,33 +222,18 @@ void process(int choice, Matrix* mat_1, Matrix* mat_2)
     }
 }
 
-int process_types(int type)
+int process_types(int type, int choice)
 {
-    int razm, choice;
+    int razm;
     Matrix* mat_1 = NULL;
     Matrix* mat_2 = NULL;
-
-    if(type >= 1 && type <= 3){
-        print_menu();
-        choice = int_input_value("Ваш выбор: ");
-        if(choice >= 1 && choice <= 4){
-            razm = int_input_value("Введите размерность квадратной матрицы\n");
-        }
-        else{
-            if(choice == 0){
-                type = 0;
-            }
-            error_print(5);
-            return type;
-        }
-    }
 
     switch(type)
     {
         case 0:
-            error_print(1);
-            return type;
+            return error_print(1);
         case 1:
+            razm = int_input_value("Введите размерность квадратной матрицы\n");
             mat_1 = create_int_matrix(razm);
             int_input(mat_1);
             printf("\nМатрица: \n");
@@ -267,6 +247,7 @@ int process_types(int type)
             }
             break;
         case 2:
+            razm = int_input_value("Введите размерность квадратной матрицы\n");
             mat_1 = create_float_matrix(razm);
             float_input(mat_1);
             printf("\nМатрица: \n");
@@ -280,6 +261,7 @@ int process_types(int type)
             }
             break;
         case 3:
+            razm = int_input_value("Введите размерность квадратной матрицы\n");
             mat_1 = create_complex_matrix(razm);
             complex_input(mat_1);
             printf("\nМатрица: \n");
@@ -294,12 +276,9 @@ int process_types(int type)
             break;
         case 4:
             run_all_matrix();
-            return type;
         default:
-            error_print(5);
-            return type;
+            return error_print(5);
     }
 
-    process(choice, mat_1, mat_2);
-    return type;
+    return process(choice, mat_1, mat_2);
 }
