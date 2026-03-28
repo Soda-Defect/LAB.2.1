@@ -2,6 +2,7 @@
 #define MATRIX_H
 
 #include <stdlib.h>
+#include "matrix_error.h"
 
 typedef void (*BinaryOperator)(void* result, void* arg1, void* arg2);
 
@@ -19,14 +20,14 @@ typedef struct {
     TypeInfo* typeInfo;
 } Matrix;
 
-Matrix* matrix_create(int razm, TypeInfo* typeInfo);
-void push_el_matrix(Matrix* mat, void* item, int row, int col);
-void* element_get(Matrix* mat, int row, int col);
-Matrix* matrix_add(Matrix* mat_1, Matrix* mat_2);
-Matrix* matrix_mult(Matrix* mat_1, Matrix* mat_2);
-Matrix* matrix_transp(Matrix* mat_1);
-void matrix_multiply_const(Matrix* mat_1, int alhpa);
-void print_matrix(Matrix* mat);
+Matrix* matrix_create(int razm, TypeInfo* typeInfo, MatrixErrors* operationResult);
+MatrixErrors push_el_matrix(Matrix* mat, void* item, int row, int col);
+void* element_get(Matrix* mat, int row, int col, MatrixErrors* operationResult);
+Matrix* matrix_add(Matrix* mat_1, Matrix* mat_2, MatrixErrors* operationResult);
+Matrix* matrix_mult(Matrix* mat_1, Matrix* mat_2, MatrixErrors* operationResult);
+Matrix* matrix_transp(Matrix* mat_1, MatrixErrors* operationResult);
+MatrixErrors matrix_multiply_const(Matrix* mat_1, int alhpa);
+MatrixErrors print_matrix(Matrix* mat);
 void matrix_free(Matrix* mat);
 
 #endif //MATRIX_H

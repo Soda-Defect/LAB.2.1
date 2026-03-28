@@ -41,29 +41,11 @@ void error_print(int error)
         case 1:
             printf("Выход из программы!\n");
             break;
-        case 2:
-            printf("ОШИБКА: Размер матрицы должен быть положительным!\n");
-            break;
-        case 3:
-            printf("Ошибка выделения памяти для матрицы!\n");
-            break;
-        case 4:
-            printf("ОШИБКА: Размер элемента должен быть больше нуля!\n");
-            break;
         case 5:
             printf("Неправильный выбор! Выберите действие из представленных в меню!\n");
             break;
-        case 6:
-            printf("ОШИБКА: Указанный номер не входит в диапазон размера!\n");
-            break;
         case 7:
             printf("ОШИБКА: Отсутствует i в комплексном числе!\n");
-            break;
-        case 8:
-            printf("ОШИБКА: Для сложения матрицы должны быть одинаковой размерности!\n");
-            break;
-        case 9:
-            printf("ОШИБКА: Для произведения размерности матриц должны быть одинаковы!\n");
             break;
         case 10:
             printf("ОШИБКА: Номер строки должен быть больше нуля!\n");
@@ -79,6 +61,38 @@ void error_print(int error)
             break;
         case 14:
             printf("ОШИБКА: Нужно вводить комплексное в формате a+bi число!\n");
+            break;
+    }
+}
+
+void print_matrix_error(MatrixErrors error) {
+    switch(error) {
+        case MEMORY_ALLOCATION_FAILED:
+            printf("ОШИБКА: Выделения памяти!\n");
+            break;
+        case MATRIX_NOT_DEFINED:
+            printf("ОШИБКА: Матрица не найдена или равна NULL!\n");
+            break;
+        case OPERATION_NOT_DEFINED:
+            printf("ОШИБКА: Операция не определена для этого типа!\n");
+            break;
+        case INCOMPATIBLE_MATRIX_TYPES:
+            printf("ОШИБКА: Несовместимые типы матриц!\n");
+            break;
+        case INVALID_MATRIX_SIZE:
+            printf("ОШИБКА: Недопустимый размер матрицы (должен быть положительным)!\n");
+            break;
+        case INVALID_MATRIX_INDEX:
+            printf("ОШИБКА: Указанный номер не входит в диапазон размера!\n");
+            break;
+        case INVALID_TYPE_INFO:
+            printf("ОШИБКА: Неверная информация о типе\n");
+            break;
+        case MATRIX_SIZE_MISMATCH:
+            printf("ОШИБКА: Несоответствие размера матрицы для работы (матрицы должны быть одинаковой размерности)!\n");
+            break;
+        default:
+            printf("Произошла неизвестная ошибка\n");
             break;
     }
 }
@@ -185,13 +199,15 @@ void process(int choice, Matrix* mat_1, Matrix* mat_2)
         return;
     }
 
+    MatrixErrors error;
+
     switch (choice)
     {
         case 0:
             error_print(1);
             return;
         case 1:
-            Matrix* sum = matrix_add(mat_1, mat_2);
+            Matrix* sum = matrix_add(mat_1, mat_2, &error);
             printf("\nПолученная Матрица: \n");
             print_matrix(sum);
             matrix_free(mat_1);
@@ -199,7 +215,7 @@ void process(int choice, Matrix* mat_1, Matrix* mat_2)
             matrix_free(sum);
             break;
         case 2:
-            Matrix* mult = matrix_mult(mat_1, mat_2);
+            Matrix* mult = matrix_mult(mat_1, mat_2, &error);
             printf("\nПолученная Матрица: \n");
             print_matrix(mult);
             matrix_free(mat_1);
@@ -207,7 +223,7 @@ void process(int choice, Matrix* mat_1, Matrix* mat_2)
             matrix_free(mult);
             break;
         case 3:
-            Matrix* transp = matrix_transp(mat_1);
+            Matrix* transp = matrix_transp(mat_1, &error);
             printf("\nПолученная Матрица: \n");
             print_matrix(transp);
             matrix_free(mat_1);
@@ -216,7 +232,7 @@ void process(int choice, Matrix* mat_1, Matrix* mat_2)
         case 4:
             int alpha;
             alpha = int_input_value("На какое число умножить?\n");
-            matrix_multiply_const(mat_1, alpha);
+            error = matrix_multiply_const(mat_1, alpha);
             printf("\nПолученная Матрица: \n");
             print_matrix(mat_1);
             matrix_free(mat_1);
@@ -232,6 +248,8 @@ int process_types(int type)
     int razm, choice;
     Matrix* mat_1 = NULL;
     Matrix* mat_2 = NULL;
+
+    MatrixErrors error;
 
     if(type >= 1 && type <= 3){
         print_menu();
@@ -254,39 +272,39 @@ int process_types(int type)
             error_print(1);
             return type;
         case 1:
-            mat_1 = matrix_create(razm, GetIntTypeInfo());
+            mat_1 = matrix_create(razm, GetIntTypeInfo(), &error);
             int_input(mat_1);
             printf("\nМатрица: \n");
             print_matrix(mat_1);
             if(choice >= 1 && choice <= 2){
                 razm = int_input_value("Введите размерность второй квадратной матрицы\n");
-                mat_2 = matrix_create(razm, GetIntTypeInfo());
+                mat_2 = matrix_create(razm, GetIntTypeInfo(), &error);
                 int_input(mat_2);
                 printf("\nВторая Матрица: \n");
                 print_matrix(mat_2);
             }
             break;
         case 2:
-            mat_1 = matrix_create(razm, GetFloatTypeInfo());
+            mat_1 = matrix_create(razm, GetFloatTypeInfo(), &error);
             float_input(mat_1);
             printf("\nМатрица: \n");
             print_matrix(mat_1);
             if(choice >= 1 && choice <= 2){
                 razm = int_input_value("Введите размерность второй квадратной матрицы\n");
-                mat_2 = matrix_create(razm, GetFloatTypeInfo());
+                mat_2 = matrix_create(razm, GetFloatTypeInfo(), &error);
                 float_input(mat_2);
                 printf("\nВторая Матрица: \n");
                 print_matrix(mat_2);
             }
             break;
         case 3:
-            mat_1 = matrix_create(razm, GetComplexTypeInfo());
+            mat_1 = matrix_create(razm, GetComplexTypeInfo(), &error);
             complex_input(mat_1);
             printf("\nМатрица: \n");
             print_matrix(mat_1);
             if(choice >= 1 && choice <= 2){
                 razm = int_input_value("Введите размерность второй квадратной матрицы\n");
-                mat_2 = matrix_create(razm, GetComplexTypeInfo());
+                mat_2 = matrix_create(razm, GetComplexTypeInfo(), &error);
                 complex_input(mat_2);
                 printf("\nВторая Матрица: \n");
                 print_matrix(mat_2);

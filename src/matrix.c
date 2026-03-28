@@ -3,27 +3,29 @@
 #include "../include/matrix/matrix.h"
 #include "../include/func.h"
 
-Matrix* matrix_create(int razm, TypeInfo* typeInfo){
+Matrix* matrix_create(int razm, TypeInfo* typeInfo, MatrixErrors* operationResult){
 
     if (razm <= 0){
-        error_print(2);
+        *operationResult = INVALID_MATRIX_SIZE;
+        return NULL;
+    }
+
+    if (typeInfo == NULL || typeInfo->size == 0) {
+        *operationResult = INVALID_TYPE_INFO;
         return NULL;
     }
 
     Matrix* matrix = (Matrix *)malloc(sizeof(Matrix));
 
-    if(!matrix){
-        error_print(3);
-        return NULL;
-    }
-    if(typeInfo->size == 0){
-        error_print(4);
+    if (matrix == NULL) {
+        *operationResult = MEMORY_ALLOCATION_FAILED;
         return NULL;
     }
 
     matrix->data = malloc(typeInfo->size * razm * razm);
 
-    if(!matrix->data){
+    if (matrix->data == NULL) {
+        *operationResult = MEMORY_ALLOCATION_FAILED;
         free(matrix);
         return NULL;
     }
@@ -31,165 +33,266 @@ Matrix* matrix_create(int razm, TypeInfo* typeInfo){
     matrix->razm = razm;
     matrix->typeInfo = typeInfo;
 
+    *operationResult = MATRIX_OPERATION_OK;
     return matrix;
 
 }
 
-void push_el_matrix(Matrix* mat, void* item, int row, int col)
-{
-    if(mat == NULL || item == NULL){
-        return;
+MatrixErrors push_el_matrix(Matrix* mat, void* item, int row, int col) {
+    if (mat == NULL) {
+        return MATRIX_NOT_DEFINED;
     }
-    if (row < 0 || row > mat->razm || col < 0 || col > mat->razm){
-        error_print(6);
-        return;
+    
+    if (item == NULL) {
+        return MATRIX_NOT_DEFINED;
+    }
+    
+    if (row < 0 || row >= mat->razm || col < 0 || col >= mat->razm) {
+        return INVALID_MATRIX_INDEX;
     }
 
-    char* target = ((char*)((mat)->data) + ((row) * (mat)->razm + (col)) * ((mat)->typeInfo->size)); 
-    memcpy(target, item, mat->typeInfo->size); 
-    return;
+    char* target = ((char*)(mat->data) + (row * mat->razm + col) * mat->typeInfo->size); 
+    memcpy(target, item, mat->typeInfo->size);
+    
+    return MATRIX_OPERATION_OK;
 }
 
-void* element_get(Matrix* mat, int row, int col)
-{
-    if(mat == NULL){
+void* element_get(Matrix* mat, int row, int col, MatrixErrors* operationResult) {
+    if (mat == NULL) {
+        *operationResult = MATRIX_NOT_DEFINED;
         return NULL;
     }
-    if (row < 0 || row > mat->razm || col < 0 || col > mat->razm){
-        error_print(6);
+    
+    if (row < 0 || row >= mat->razm || col < 0 || col >= mat->razm) {
+        *operationResult = INVALID_MATRIX_INDEX;
         return NULL;
     }
 
-    return ((char*)((mat)->data) + ((row) * (mat)->razm + (col)) * ((mat)->typeInfo->size));
+    *operationResult = MATRIX_OPERATION_OK;
+    return ((char*)(mat->data) + (row * mat->razm + col) * mat->typeInfo->size);
 }
 
-Matrix* matrix_add(Matrix* mat_1, Matrix* mat_2)
-{
-    if(mat_1 == NULL || mat_2 == NULL || mat_1 ->typeInfo->add == NULL || mat_2 -> typeInfo-> add == NULL){
+Matrix* matrix_add(Matrix* mat_1, Matrix* mat_2, MatrixErrors* operationResult) {
+    if (mat_1 == NULL || mat_2 == NULL) {
+        *operationResult = MATRIX_NOT_DEFINED;
         return NULL;
     }
-    if(mat_1 -> razm != mat_2 -> razm){
-        error_print(8);
+    
+    if (mat_1->typeInfo->add == NULL || mat_2->typeInfo->add == NULL) {
+        *operationResult = OPERATION_NOT_DEFINED;
+        return NULL;
+    }
+    
+    if (mat_1->razm != mat_2->razm) {
+        *operationResult = MATRIX_SIZE_MISMATCH;
+        return NULL;
+    }
+    
+    if (mat_1->typeInfo != mat_2->typeInfo) {
+        *operationResult = INCOMPATIBLE_MATRIX_TYPES;
         return NULL;
     }
 
-    Matrix* result = matrix_create(mat_1 -> razm, mat_1 -> typeInfo);
+    Matrix* result = matrix_create(mat_1->razm, mat_1->typeInfo, operationResult);
     if (result == NULL) {
         return NULL;
     }
 
-    for(int i = 0; i < mat_1 -> razm; i++){
-        for(int j = 0; j < mat_1 -> razm; j++){
-            void* sum = malloc(mat_1 -> typeInfo-> size);
-            if(sum == NULL){
+    for (int i = 0; i < mat_1->razm; i++) {
+        for (int j = 0; j < mat_1->razm; j++) {
+            void* sum = malloc(mat_1->typeInfo->size);
+            if (sum == NULL) {
+                *operationResult = MEMORY_ALLOCATION_FAILED;
+                matrix_free(result);
                 return NULL;
             }
 
-            void* elem_1 = element_get(mat_1, i, j);
-            void* elem_2 = element_get(mat_2, i, j);
+            MatrixErrors err;
+            void* elem_1 = element_get(mat_1, i, j, &err);
+            void* elem_2 = element_get(mat_2, i, j, &err);
+            
+            if (elem_1 == NULL || elem_2 == NULL) {
+                free(sum);
+                matrix_free(result);
+                *operationResult = err;
+                return NULL;
+            }
 
-            mat_1 -> typeInfo->add(sum, elem_1, elem_2);
-
-            push_el_matrix(result, sum, i, j);
+            mat_1->typeInfo->add(sum, elem_1, elem_2);
+            err = push_el_matrix(result, sum, i, j);
             free(sum);
+            
+            if (err != MATRIX_OPERATION_OK) {
+                *operationResult = err;
+                matrix_free(result);
+                return NULL;
+            }
         }
     }
 
+    *operationResult = MATRIX_OPERATION_OK;
     return result;
 }
 
-Matrix* matrix_mult(Matrix* mat_1, Matrix* mat_2)
-{
-    if(mat_1 == NULL || mat_2 == NULL || mat_1 -> typeInfo ->add == NULL || mat_1 -> typeInfo->multiply == NULL){
+Matrix* matrix_mult(Matrix* mat_1, Matrix* mat_2, MatrixErrors* operationResult) {    
+    if (mat_1 == NULL || mat_2 == NULL) {
+        *operationResult = MATRIX_NOT_DEFINED;
         return NULL;
     }
-    if(mat_1 -> razm != mat_2 -> razm){
-        error_print(9);
+    
+    if (mat_1->typeInfo->add == NULL || mat_1->typeInfo->multiply == NULL) {
+        *operationResult = OPERATION_NOT_DEFINED;
+        return NULL;
+    }
+    
+    if (mat_1->razm != mat_2->razm) {
+        *operationResult = MATRIX_SIZE_MISMATCH;
+        return NULL;
+    }
+    
+    if (mat_1->typeInfo != mat_2->typeInfo) {
+        *operationResult = INCOMPATIBLE_MATRIX_TYPES;
         return NULL;
     }
 
-    Matrix* result = matrix_create(mat_1 -> razm, mat_1 -> typeInfo);
+    Matrix* result = matrix_create(mat_1->razm, mat_1->typeInfo, operationResult);
     if (result == NULL) {
         return NULL;
     }
 
-    for(int i = 0; i < mat_1 -> razm; i++){
-        for(int j = 0; j < mat_2 -> razm; j++){
-            void* sum = malloc(mat_1 -> typeInfo-> size);
-            if(sum == NULL){
+    for (int i = 0; i < mat_1->razm; i++) {
+        for (int j = 0; j < mat_2->razm; j++) {
+            void* sum = malloc(mat_1->typeInfo->size);
+            if (sum == NULL) {
+                *operationResult = MEMORY_ALLOCATION_FAILED;
+                matrix_free(result);
                 return NULL;
             }
             memset(sum, 0, mat_1->typeInfo->size);
-            for(int k = 0; k < mat_1 -> razm; k++){
-                void* mult = malloc(mat_1 -> typeInfo-> size);
-                if(mult == NULL){
+            
+            for (int k = 0; k < mat_1->razm; k++) {
+                void* mult = malloc(mat_1->typeInfo->size);
+                if (mult == NULL) {
+                    *operationResult = MEMORY_ALLOCATION_FAILED;
+                    free(sum);
+                    matrix_free(result);
                     return NULL;
                 }
-                void* elem_1 = element_get(mat_1, i, k);
-                void* elem_2 = element_get(mat_2, k, j);
-                mat_1 -> typeInfo->multiply(mult, elem_1, elem_2);
-                mat_1 -> typeInfo->add(sum, sum, mult);
+                
+                MatrixErrors err;
+                void* elem_1 = element_get(mat_1, i, k, &err);
+                void* elem_2 = element_get(mat_2, k, j, &err);
+                
+                if (elem_1 == NULL || elem_2 == NULL) {
+                    free(mult);
+                    free(sum);
+                    matrix_free(result);
+                    *operationResult = err;
+                    return NULL;
+                }
+                
+                mat_1->typeInfo->multiply(mult, elem_1, elem_2);
+                mat_1->typeInfo->add(sum, sum, mult);
                 free(mult);
             }
-            push_el_matrix(result, sum, i, j);
+            
+            MatrixErrors err = push_el_matrix(result, sum, i, j);
             free(sum);
+            
+            if (err != MATRIX_OPERATION_OK) {
+                *operationResult = err;
+                matrix_free(result);
+                return NULL;
+            }
         }
     }
 
+    *operationResult = MATRIX_OPERATION_OK;
     return result;
 }
 
-Matrix* matrix_transp(Matrix* mat_1)
-{
-    if(mat_1 == NULL){
+Matrix* matrix_transp(Matrix* mat_1, MatrixErrors* operationResult) {
+    if (mat_1 == NULL) {
+        *operationResult = MATRIX_NOT_DEFINED;
         return NULL;
     }
 
-    Matrix* result = matrix_create(mat_1 -> razm, mat_1 -> typeInfo);
+    Matrix* result = matrix_create(mat_1->razm, mat_1->typeInfo, operationResult);
     if (result == NULL) {
         return NULL;
     }
 
-    for(int i = 0; i < mat_1 -> razm; i++){
-        for(int j = 0; j < mat_1 ->razm; j++){
-            void* elem_1 = element_get(mat_1, i, j);
-            push_el_matrix(result, elem_1, j, i);
+    for (int i = 0; i < mat_1->razm; i++) {
+        for (int j = 0; j < mat_1->razm; j++) {
+            MatrixErrors err;
+            void* elem_1 = element_get(mat_1, i, j, &err);
+            if (elem_1 == NULL) {
+                *operationResult = err;
+                matrix_free(result);
+                return NULL;
+            }
+            
+            err = push_el_matrix(result, elem_1, j, i);
+            if (err != MATRIX_OPERATION_OK) {
+                *operationResult = err;
+                matrix_free(result);
+                return NULL;
+            }
         }
     }
 
+    *operationResult = MATRIX_OPERATION_OK;
     return result;
 }
 
-void matrix_multiply_const(Matrix* mat_1, int alhpa)
-{
-    if(mat_1 == NULL || mat_1 -> typeInfo->mult_const == NULL){
-        return;
+MatrixErrors matrix_multiply_const(Matrix* mat_1, int alpha) {
+    if (mat_1 == NULL) {
+        return MATRIX_NOT_DEFINED;
+    }
+    
+    if (mat_1->typeInfo->mult_const == NULL) {
+        return OPERATION_NOT_DEFINED;
     }
 
-    for(int i = 0; i < mat_1 -> razm; i++){
-        for(int j = 0; j < mat_1 -> razm; j++){
-            void* elem_1 = element_get(mat_1, i, j);
-            mat_1 -> typeInfo->mult_const(elem_1, elem_1, alhpa);
+    for (int i = 0; i < mat_1->razm; i++) {
+        for (int j = 0; j < mat_1->razm; j++) {
+            void* elem_1 = (char*)mat_1->data + (i * mat_1->razm + j) * mat_1->typeInfo->size;
+            if (elem_1 == NULL) {
+                return MATRIX_NOT_DEFINED;
+            }
+            mat_1->typeInfo->mult_const(elem_1, elem_1, alpha);
             push_el_matrix(mat_1, elem_1, i, j);
         }
     }
+    
+    return MATRIX_OPERATION_OK;
 }
 
-void print_matrix(Matrix* mat) {
-    if (mat == NULL || mat -> typeInfo->print == NULL) {
-        return;
+MatrixErrors print_matrix(Matrix* mat) {
+    if (mat == NULL) {
+        return MATRIX_NOT_DEFINED;
     }
-    for(int i = 0; i < mat->razm; i++){
+    
+    if (mat->typeInfo == NULL || mat->typeInfo->print == NULL) {
+        return OPERATION_NOT_DEFINED;
+    }
+    
+    for (int i = 0; i < mat->razm; i++) {
         printf("|");
-        for(int j = 0; j < mat->razm; j++){
-            void* elem = element_get(mat, i, j);
-            mat -> typeInfo->print(elem);
-            if(j + 1 != mat->razm){
+        for (int j = 0; j < mat->razm; j++) {
+            MatrixErrors err;
+            void* elem = element_get(mat, i, j, &err);
+            if (elem != NULL && err == MATRIX_OPERATION_OK) {
+                mat->typeInfo->print(elem);
+            }
+            if (j + 1 != mat->razm) {
                 printf(" ");
             }
         }
         printf("|\n");
     }
+    
+    return MATRIX_OPERATION_OK;
 }
 
 void matrix_free(Matrix* mat)
