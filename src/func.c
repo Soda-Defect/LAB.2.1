@@ -208,6 +208,10 @@ void process(int choice, Matrix* mat_1, Matrix* mat_2)
             return;
         case 1:
             Matrix* sum = matrix_add(mat_1, mat_2, &error);
+            if(error != MATRIX_OPERATION_OK){
+                print_matrix_error(error);
+                break;
+            }
             printf("\nПолученная Матрица: \n");
             print_matrix(sum);
             matrix_free(mat_1);
@@ -216,6 +220,10 @@ void process(int choice, Matrix* mat_1, Matrix* mat_2)
             break;
         case 2:
             Matrix* mult = matrix_mult(mat_1, mat_2, &error);
+            if(error != MATRIX_OPERATION_OK){
+                print_matrix_error(error);
+                break;
+            }
             printf("\nПолученная Матрица: \n");
             print_matrix(mult);
             matrix_free(mat_1);
@@ -224,6 +232,10 @@ void process(int choice, Matrix* mat_1, Matrix* mat_2)
             break;
         case 3:
             Matrix* transp = matrix_transp(mat_1, &error);
+            if(error != MATRIX_OPERATION_OK){
+                print_matrix_error(error);
+                break;
+            }
             printf("\nПолученная Матрица: \n");
             print_matrix(transp);
             matrix_free(mat_1);
@@ -233,6 +245,10 @@ void process(int choice, Matrix* mat_1, Matrix* mat_2)
             int alpha;
             alpha = int_input_value("На какое число умножить?\n");
             error = matrix_multiply_const(mat_1, alpha);
+            if(error != MATRIX_OPERATION_OK){
+                print_matrix_error(error);
+                break;
+            }
             printf("\nПолученная Матрица: \n");
             print_matrix(mat_1);
             matrix_free(mat_1);
@@ -273,12 +289,20 @@ int process_types(int type)
             return type;
         case 1:
             mat_1 = matrix_create(razm, GetIntTypeInfo(), &error);
+            if(error != MATRIX_OPERATION_OK){
+                print_matrix_error(error);
+                break;
+            }
             int_input(mat_1);
             printf("\nМатрица: \n");
             print_matrix(mat_1);
             if(choice >= 1 && choice <= 2){
                 razm = int_input_value("Введите размерность второй квадратной матрицы\n");
                 mat_2 = matrix_create(razm, GetIntTypeInfo(), &error);
+                if(error != MATRIX_OPERATION_OK){
+                    print_matrix_error(error);
+                    break;
+                }
                 int_input(mat_2);
                 printf("\nВторая Матрица: \n");
                 print_matrix(mat_2);
@@ -286,12 +310,20 @@ int process_types(int type)
             break;
         case 2:
             mat_1 = matrix_create(razm, GetFloatTypeInfo(), &error);
+            if(error != MATRIX_OPERATION_OK){
+                print_matrix_error(error);
+                break;
+            }
             float_input(mat_1);
             printf("\nМатрица: \n");
             print_matrix(mat_1);
             if(choice >= 1 && choice <= 2){
                 razm = int_input_value("Введите размерность второй квадратной матрицы\n");
                 mat_2 = matrix_create(razm, GetFloatTypeInfo(), &error);
+                if(error != MATRIX_OPERATION_OK){
+                    print_matrix_error(error);
+                    break;
+                }
                 float_input(mat_2);
                 printf("\nВторая Матрица: \n");
                 print_matrix(mat_2);
@@ -299,12 +331,20 @@ int process_types(int type)
             break;
         case 3:
             mat_1 = matrix_create(razm, GetComplexTypeInfo(), &error);
+            if(error != MATRIX_OPERATION_OK){
+                print_matrix_error(error);
+                break;
+            }
             complex_input(mat_1);
             printf("\nМатрица: \n");
             print_matrix(mat_1);
             if(choice >= 1 && choice <= 2){
                 razm = int_input_value("Введите размерность второй квадратной матрицы\n");
                 mat_2 = matrix_create(razm, GetComplexTypeInfo(), &error);
+                if(error != MATRIX_OPERATION_OK){
+                    print_matrix_error(error);
+                    break;
+                }
                 complex_input(mat_2);
                 printf("\nВторая Матрица: \n");
                 print_matrix(mat_2);
