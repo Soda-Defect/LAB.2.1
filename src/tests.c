@@ -13,7 +13,7 @@ void run_int_matrix()
     printf("\n=== Тестирование матрицы целых чисел ===\n");
 
     printf("Создание матрицы 3x3\n");
-    Matrix* mat = create_int_matrix(3);
+    Matrix* mat = matrix_create(3, GetIntTypeInfo());
     assert(mat != NULL);
     ASSERT_EQ(mat->razm, 3);
 
@@ -41,7 +41,7 @@ void run_int_matrix()
     }
 
     printf("Создание второй матрицы 3x3\n");
-    Matrix* mat_2 = create_int_matrix(3);
+    Matrix* mat_2 = matrix_create(3, GetIntTypeInfo());
     assert(mat_2 != NULL);
     ASSERT_EQ(mat_2->razm, 3);
 
@@ -109,7 +109,7 @@ void run_int_matrix()
     }
 
     printf("Умножение на скаляр 3\n");
-    mat_2 = create_int_matrix(3);
+    mat_2 = matrix_create(3, GetIntTypeInfo());
     k = 0;
     for(int i = 0; i < mat_2->razm; i++){
         for(int j = 0; j < mat_2->razm; j++){
@@ -135,11 +135,11 @@ void run_int_matrix()
     printf("\n=== Обработка ошибок ===\n");
 
     printf("\nПопытка создать матрицу с отрицательным размером\n");
-    mat = create_int_matrix(-3);
+    mat = matrix_create(-3, GetIntTypeInfo());
     ASSERT_EQ(mat, NULL);
 
     printf("\nПопытка занести в матрицу элемент в несуществующую ячейку [-1][-2]\n");
-    mat = create_int_matrix(3);
+    mat = matrix_create(3, GetIntTypeInfo());
     push_el_matrix(mat, &elem, -1, -2);
     printf("\nПопытка занести в матрицу элемент в несуществующую ячейку [4][4]\n");
     push_el_matrix(mat, &elem, 4, 4);
@@ -150,7 +150,7 @@ void run_int_matrix()
     (int*)element_get(mat, 4, 4);
 
     printf("\nПопытка сложить матрицы разной размерности\n");
-    mat_2 = create_int_matrix(4);
+    mat_2 = matrix_create(4, GetIntTypeInfo());
     sum = matrix_add(mat, mat_2);
     ASSERT_EQ(sum, NULL);
 
@@ -172,7 +172,7 @@ void run_float_matrix()
     printf("\n=== Тестирование матрицы вещественных чисел ===\n");
 
     printf("Создание матрицы 3x3\n");
-    Matrix* mat = create_float_matrix(3);
+    Matrix* mat = matrix_create(3, GetFloatTypeInfo());
     assert(mat != NULL);
     ASSERT_EQ(mat->razm, 3);
 
@@ -200,7 +200,7 @@ void run_float_matrix()
     }
 
     printf("Создание второй матрицы 3x3\n");
-    Matrix* mat_2 = create_float_matrix(3);
+    Matrix* mat_2 = matrix_create(3, GetFloatTypeInfo());
     assert(mat_2 != NULL);
     ASSERT_EQ(mat_2->razm, 3);
 
@@ -268,7 +268,7 @@ void run_float_matrix()
     }
 
     printf("Умножение на скаляр 3\n");
-    mat_2 = create_float_matrix(3);
+    mat_2 = matrix_create(3, GetFloatTypeInfo());
     k = 0;
     for(int i = 0; i < mat_2->razm; i++){
         for(int j = 0; j < mat_2->razm; j++){
@@ -294,11 +294,11 @@ void run_float_matrix()
     printf("\n=== Обработка ошибок ===\n");
 
     printf("\nПопытка создать матрицу с отрицательным размером\n");
-    mat = create_float_matrix(-3);
+    mat = matrix_create(-3, GetFloatTypeInfo());
     ASSERT_EQ(mat, NULL);
 
     printf("\nПопытка занести в матрицу элемент в несуществующую ячейку [-1][-2]\n");
-    mat = create_float_matrix(3);
+    mat = matrix_create(3, GetFloatTypeInfo());
     push_el_matrix(mat, &elem, -1, -2);
     printf("\nПопытка занести в матрицу элемент в несуществующую ячейку [4][4]\n");
     push_el_matrix(mat, &elem, 4, 4);
@@ -309,7 +309,7 @@ void run_float_matrix()
     (float*)element_get(mat, 4, 4);
 
     printf("\nПопытка сложить матрицы разной размерности\n");
-    mat_2 = create_float_matrix(4);
+    mat_2 = matrix_create(4, GetFloatTypeInfo());
     sum = matrix_add(mat, mat_2);
     ASSERT_EQ(sum, NULL);
 
@@ -331,7 +331,7 @@ void run_complex_matrix()
     printf("\n=== Тестирование матрицы комплексных чисел ===\n");
 
     printf("Создание матрицы 3x3\n");
-    Matrix* mat = create_complex_matrix(3);
+    Matrix* mat = matrix_create(3, GetComplexTypeInfo());
     assert(mat != NULL);
     ASSERT_EQ(mat->razm, 3);
 
@@ -364,7 +364,7 @@ void run_complex_matrix()
     }
 
     printf("Создание второй матрицы 3x3\n");
-    Matrix* mat_2 = create_complex_matrix(3);
+    Matrix* mat_2 = matrix_create(3, GetComplexTypeInfo());
     assert(mat_2 != NULL);
     ASSERT_EQ(mat_2->razm, 3);
 
@@ -442,7 +442,7 @@ void run_complex_matrix()
     }
 
     printf("Умножение на скаляр 3\n");
-    mat_2 = create_complex_matrix(3);
+    mat_2 = matrix_create(3, GetComplexTypeInfo());
     k = 0;
     for(int i = 0; i < mat_2->razm; i++){
         for(int j = 0; j < mat_2->razm; j++){
@@ -471,11 +471,11 @@ void run_complex_matrix()
     printf("\n=== Обработка ошибок ===\n");
 
     printf("\nПопытка создать матрицу с отрицательным размером\n");
-    mat = create_complex_matrix(-3);
+    mat = matrix_create(-3, GetComplexTypeInfo());
     ASSERT_EQ(mat, NULL);
 
     printf("\nПопытка занести в матрицу элемент в несуществующую ячейку [-1][-2]\n");
-    mat = create_complex_matrix(3);
+    mat = matrix_create(3, GetComplexTypeInfo());
     Complex c = complex_create(elem_re, elem_im);
     push_el_matrix(mat, &c, -1, -2);
     printf("\nПопытка занести в матрицу элемент в несуществующую ячейку [4][4]\n");
@@ -487,7 +487,7 @@ void run_complex_matrix()
     (Complex*)element_get(mat, 4, 4);
 
     printf("\nПопытка сложить матрицы разной размерности\n");
-    mat_2 = create_complex_matrix(4);
+    mat_2 = matrix_create(4, GetComplexTypeInfo());
     sum = matrix_add(mat, mat_2);
     ASSERT_EQ(sum, NULL);
 

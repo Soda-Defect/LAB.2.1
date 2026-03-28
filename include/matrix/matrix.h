@@ -3,23 +3,23 @@
 
 #include <stdlib.h>
 
+typedef void (*BinaryOperator)(void* result, void* arg1, void* arg2);
+
 typedef struct {
-    void* data;               // Непрерывный блок памяти для всех элементов
-    size_t element_size;      // Размер одного элемента
-    size_t razm;              // Размерность квадратной матрицы
-    
-    // Функции для работы с элементами
-    void (*print_element)(void*);                    // Печать элемента
-    void (*add_elements)(void*, void*, void*);       // Сложение элементов
-    void (*multiply_elements)(void*, void*, void*);  // Умножение элементов
-    void (*mult_elements_const)(void* , void* , int ); //Умножение элементов на скаляр
+    size_t size;
+    BinaryOperator add;
+    BinaryOperator multiply;
+    void (*mult_const)(void*, void*, int);
+    void (*print)(void*);
+} TypeInfo;
+
+typedef struct {
+    void* data;               
+    size_t razm;              
+    TypeInfo* typeInfo;
 } Matrix;
 
-Matrix* matrix_create(int razm, size_t element_size,
-                      void (*print_element)(void*),
-                      void (*add_elements)(void*, void*, void*),
-                      void (*multiply_elements)(void*, void*, void*),
-                      void (*mult_elements_const)(void* , void* , int ));
+Matrix* matrix_create(int razm, TypeInfo* typeInfo);
 void push_el_matrix(Matrix* mat, void* item, int row, int col);
 void* element_get(Matrix* mat, int row, int col);
 Matrix* matrix_add(Matrix* mat_1, Matrix* mat_2);

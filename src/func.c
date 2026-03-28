@@ -254,39 +254,39 @@ int process_types(int type)
             error_print(1);
             return type;
         case 1:
-            mat_1 = create_int_matrix(razm);
+            mat_1 = matrix_create(razm, GetIntTypeInfo());
             int_input(mat_1);
             printf("\nМатрица: \n");
             print_matrix(mat_1);
             if(choice >= 1 && choice <= 2){
                 razm = int_input_value("Введите размерность второй квадратной матрицы\n");
-                mat_2 = create_int_matrix(razm);
+                mat_2 = matrix_create(razm, GetIntTypeInfo());
                 int_input(mat_2);
                 printf("\nВторая Матрица: \n");
                 print_matrix(mat_2);
             }
             break;
         case 2:
-            mat_1 = create_float_matrix(razm);
+            mat_1 = matrix_create(razm, GetFloatTypeInfo());
             float_input(mat_1);
             printf("\nМатрица: \n");
             print_matrix(mat_1);
             if(choice >= 1 && choice <= 2){
                 razm = int_input_value("Введите размерность второй квадратной матрицы\n");
-                mat_2 = create_float_matrix(razm);
+                mat_2 = matrix_create(razm, GetFloatTypeInfo());
                 float_input(mat_2);
                 printf("\nВторая Матрица: \n");
                 print_matrix(mat_2);
             }
             break;
         case 3:
-            mat_1 = create_complex_matrix(razm);
+            mat_1 = matrix_create(razm, GetComplexTypeInfo());
             complex_input(mat_1);
             printf("\nМатрица: \n");
             print_matrix(mat_1);
             if(choice >= 1 && choice <= 2){
                 razm = int_input_value("Введите размерность второй квадратной матрицы\n");
-                mat_2 = create_complex_matrix(razm);
+                mat_2 = matrix_create(razm, GetComplexTypeInfo());
                 complex_input(mat_2);
                 printf("\nВторая Матрица: \n");
                 print_matrix(mat_2);

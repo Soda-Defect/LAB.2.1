@@ -2,6 +2,8 @@
 #include "../include/matrix/matrix.h"
 #include "../include/matrix/matrix_complex.h"
 
+static TypeInfo* COMPLEX_TYPE_INFO = NULL;
+
 void print_complex(void* element) {
     Complex* c = (Complex *)element;
     complex_print(*c);
@@ -30,6 +32,14 @@ void mult_complex_const(void* result, void* a, int b) {
     res->imag =c1->imag  * b;
 }
 
-Matrix* create_complex_matrix(int razm) {
-    return matrix_create(razm, sizeof(Complex), print_complex, add_complex, mult_complex, mult_complex_const);
+TypeInfo* GetComplexTypeInfo() {
+    if (COMPLEX_TYPE_INFO == NULL) {
+        COMPLEX_TYPE_INFO = (TypeInfo*)malloc(sizeof(TypeInfo));
+        COMPLEX_TYPE_INFO->size = sizeof(Complex);
+        COMPLEX_TYPE_INFO->add = add_complex;
+        COMPLEX_TYPE_INFO->multiply = mult_complex; 
+        COMPLEX_TYPE_INFO->mult_const = mult_complex_const;
+        COMPLEX_TYPE_INFO->print = print_complex;
+    }
+    return COMPLEX_TYPE_INFO;
 }
