@@ -124,8 +124,8 @@ void int_input(Matrix* mat)
 {
     int value, success;
     char term;
-    for(int i = 0; i < mat -> razm; i++){
-        for(int j = 0; j < mat -> razm; j++){
+    for(int i = 0; i < mat -> dimension; i++){
+        for(int j = 0; j < mat -> dimension; j++){
             do{
                 success = 0;
                 printf("Введите элемент[%d][%d] целого типа:\n", i, j);
@@ -146,8 +146,8 @@ void float_input(Matrix* mat)
     float value;
     int success;
     char term;
-    for(int i = 0; i < mat -> razm; i++){
-        for(int j = 0; j < mat -> razm; j++){
+    for(int i = 0; i < mat -> dimension; i++){
+        for(int j = 0; j < mat -> dimension; j++){
             do{
                 success = 0;
                 printf("Введите элемент[%d][%d] вещественного типа:\n", i, j);
@@ -167,8 +167,8 @@ void complex_input(Matrix* mat)
 {
     int re, im, success;
     char sign, i_char, term;
-    for(int i = 0; i < mat -> razm; i++){
-        for(int j = 0; j < mat -> razm; j++){
+    for(int i = 0; i < mat -> dimension; i++){
+        for(int j = 0; j < mat -> dimension; j++){
             do{
                 success = 0;
                 printf("Введите элемент[%d][%d] в формате a+bi: \n", i, j);
@@ -261,7 +261,7 @@ void process(int choice, Matrix* mat_1, Matrix* mat_2)
 
 int process_types(int type)
 {
-    int razm, choice;
+    int dimension, choice;
     Matrix* mat_1 = NULL;
     Matrix* mat_2 = NULL;
 
@@ -271,7 +271,7 @@ int process_types(int type)
         print_menu();
         choice = int_input_value("Ваш выбор: ");
         if(choice >= 1 && choice <= 4){
-            razm = int_input_value("Введите размерность квадратной матрицы\n");
+            dimension = int_input_value("Введите размерность квадратной матрицы\n");
         }
         else{
             if(choice == 0){
@@ -288,7 +288,7 @@ int process_types(int type)
             error_print(1);
             return type;
         case 1:
-            mat_1 = matrix_create(razm, GetIntTypeInfo(), &error);
+            mat_1 = matrix_create(dimension, GetIntTypeInfo(), &error);
             if(error != MATRIX_OPERATION_OK){
                 print_matrix_error(error);
                 break;
@@ -297,8 +297,8 @@ int process_types(int type)
             printf("\nМатрица: \n");
             print_matrix(mat_1);
             if(choice >= 1 && choice <= 2){
-                razm = int_input_value("Введите размерность второй квадратной матрицы\n");
-                mat_2 = matrix_create(razm, GetIntTypeInfo(), &error);
+                dimension = int_input_value("Введите размерность второй квадратной матрицы\n");
+                mat_2 = matrix_create(dimension, GetIntTypeInfo(), &error);
                 if(error != MATRIX_OPERATION_OK){
                     print_matrix_error(error);
                     break;
@@ -309,7 +309,7 @@ int process_types(int type)
             }
             break;
         case 2:
-            mat_1 = matrix_create(razm, GetFloatTypeInfo(), &error);
+            mat_1 = matrix_create(dimension, GetFloatTypeInfo(), &error);
             if(error != MATRIX_OPERATION_OK){
                 print_matrix_error(error);
                 break;
@@ -318,8 +318,8 @@ int process_types(int type)
             printf("\nМатрица: \n");
             print_matrix(mat_1);
             if(choice >= 1 && choice <= 2){
-                razm = int_input_value("Введите размерность второй квадратной матрицы\n");
-                mat_2 = matrix_create(razm, GetFloatTypeInfo(), &error);
+                dimension = int_input_value("Введите размерность второй квадратной матрицы\n");
+                mat_2 = matrix_create(dimension, GetFloatTypeInfo(), &error);
                 if(error != MATRIX_OPERATION_OK){
                     print_matrix_error(error);
                     break;
@@ -330,7 +330,7 @@ int process_types(int type)
             }
             break;
         case 3:
-            mat_1 = matrix_create(razm, GetComplexTypeInfo(), &error);
+            mat_1 = matrix_create(dimension, GetComplexTypeInfo(), &error);
             if(error != MATRIX_OPERATION_OK){
                 print_matrix_error(error);
                 break;
@@ -339,8 +339,8 @@ int process_types(int type)
             printf("\nМатрица: \n");
             print_matrix(mat_1);
             if(choice >= 1 && choice <= 2){
-                razm = int_input_value("Введите размерность второй квадратной матрицы\n");
-                mat_2 = matrix_create(razm, GetComplexTypeInfo(), &error);
+                dimension = int_input_value("Введите размерность второй квадратной матрицы\n");
+                mat_2 = matrix_create(dimension, GetComplexTypeInfo(), &error);
                 if(error != MATRIX_OPERATION_OK){
                     print_matrix_error(error);
                     break;

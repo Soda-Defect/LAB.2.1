@@ -21,15 +21,15 @@ void run_int_matrix()
         print_matrix_error(error);
     }
     assert(mat != NULL);
-    ASSERT_EQ(mat->razm, 3);
+    ASSERT_EQ(mat->dimension, 3);
 
     printf("Добавляем элементы\n");
     int array_el[] = {1, 5, 7, 2, 4, 9, 8, 0, 3};
     int elem;
     int k = 0;
     int *ptr, *ptr_2, *ptr_3, *ptr_4;
-    for(int i = 0; i < mat->razm; i++){
-        for(int j = 0; j < mat->razm; j++){
+    for(int i = 0; i < mat->dimension; i++){
+        for(int j = 0; j < mat->dimension; j++){
             elem = array_el[k];
             k++;
             error = push_el_matrix(mat, &elem, i, j);
@@ -40,8 +40,8 @@ void run_int_matrix()
     }
     error = print_matrix(mat);
     k = 0;
-    for(int i = 0; i < mat->razm; i++){
-        for(int j = 0; j < mat->razm; j++){
+    for(int i = 0; i < mat->dimension; i++){
+        for(int j = 0; j < mat->dimension; j++){
             elem = array_el[k];
             k++;
             ptr = (int*)element_get(mat, i, j, &error);
@@ -55,14 +55,14 @@ void run_int_matrix()
     printf("Создание второй матрицы 3x3\n");
     Matrix* mat_2 = matrix_create(3, GetIntTypeInfo(), &error);
     assert(mat_2 != NULL);
-    ASSERT_EQ(mat_2->razm, 3);
+    ASSERT_EQ(mat_2->dimension, 3);
 
     printf("Добавляем элементы\n");
     int array_el_2[] = {8, 0, 7, 2, 4, 3, 0, 6, 9};
     int elem_2;
     k = 0;
-    for(int i = 0; i < mat_2->razm; i++){
-        for(int j = 0; j < mat_2->razm; j++){
+    for(int i = 0; i < mat_2->dimension; i++){
+        for(int j = 0; j < mat_2->dimension; j++){
             elem_2 = array_el_2[k];
             k++;
             error = push_el_matrix(mat_2, &elem_2, i, j);
@@ -70,8 +70,8 @@ void run_int_matrix()
     }
     error = print_matrix(mat_2);
     k = 0;
-    for(int i = 0; i < mat_2->razm; i++){
-        for(int j = 0; j < mat_2->razm; j++){
+    for(int i = 0; i < mat_2->dimension; i++){
+        for(int j = 0; j < mat_2->dimension; j++){
             elem_2 = array_el_2[k];
             k++;
             ptr = (int*)element_get(mat_2, i, j, &error);
@@ -85,10 +85,10 @@ void run_int_matrix()
         print_matrix_error(error);
     }
     error = print_matrix(mult);
-    for(int i = 0; i < mat->razm; i++){
-        for(int j = 0; j < mat->razm; j++){
+    for(int i = 0; i < mat->dimension; i++){
+        for(int j = 0; j < mat->dimension; j++){
             int sum = 0;
-            for(int k = 0; k < mat -> razm; k++){
+            for(int k = 0; k < mat -> dimension; k++){
                 ptr = (int*)element_get(mat, i, k, &error);
                 ptr_2 = (int*)element_get(mat_2, k, j, &error);
                 sum += *ptr * *ptr_2;
@@ -104,8 +104,8 @@ void run_int_matrix()
         print_matrix_error(error);
     }
     error = print_matrix(sum);
-    for(int i = 0; i < mat->razm; i++){
-        for(int j = 0; j < mat->razm; j++){
+    for(int i = 0; i < mat->dimension; i++){
+        for(int j = 0; j < mat->dimension; j++){
             ptr = (int*)element_get(mat, i, j, &error);
             ptr_2 = (int*)element_get(mat_2, i, j, &error);
             ptr_3 = (int*)element_get(sum, i, j, &error);
@@ -121,8 +121,8 @@ void run_int_matrix()
         print_matrix_error(error);
     }
     error = print_matrix(transp);
-    for(int i = 0; i < mat->razm; i++){
-        for(int j = 0; j < mat->razm; j++){
+    for(int i = 0; i < mat->dimension; i++){
+        for(int j = 0; j < mat->dimension; j++){
             ptr = (int*)element_get(mat, i, j, &error);
             ptr_2 = (int*)element_get(transp, j, i, &error);
             ASSERT_EQ(*ptr, *ptr_2);
@@ -132,8 +132,8 @@ void run_int_matrix()
     printf("Умножение на скаляр 3\n");
     mat_2 = matrix_create(3, GetIntTypeInfo(), &error);
     k = 0;
-    for(int i = 0; i < mat_2->razm; i++){
-        for(int j = 0; j < mat_2->razm; j++){
+    for(int i = 0; i < mat_2->dimension; i++){
+        for(int j = 0; j < mat_2->dimension; j++){
             elem = array_el[k];
             k++;
             error = push_el_matrix(mat_2, &elem, i, j);
@@ -145,8 +145,8 @@ void run_int_matrix()
     }
     error = print_matrix(mat);
 
-    for(int i = 0; i < mat -> razm; i++){
-        for(int j = 0; j < mat -> razm; j++){
+    for(int i = 0; i < mat -> dimension; i++){
+        for(int j = 0; j < mat -> dimension; j++){
             ptr = (int*)element_get(mat, i, j, &error);
             ptr_2 = (int*)element_get(mat_2, i, j, &error);
             ASSERT_EQ(*ptr, *ptr_2 * 3);
@@ -212,15 +212,15 @@ void run_float_matrix()
         print_matrix_error(error);
     }
     assert(mat != NULL);
-    ASSERT_EQ(mat->razm, 3);
+    ASSERT_EQ(mat->dimension, 3);
 
     printf("Добавляем элементы\n");
     float array_el[] = {1.12, 5.01, 7.2, 2.41, 4.37, 9.04, 8.24, 1.09, 3.1};
     float elem;
     int k = 0;
     float *ptr, *ptr_2, *ptr_3, *ptr_4;
-    for(int i = 0; i < mat->razm; i++){
-        for(int j = 0; j < mat->razm; j++){
+    for(int i = 0; i < mat->dimension; i++){
+        for(int j = 0; j < mat->dimension; j++){
             elem = array_el[k];
             k++;
             error = push_el_matrix(mat, &elem, i, j);
@@ -231,8 +231,8 @@ void run_float_matrix()
     }
     error = print_matrix(mat);
     k = 0;
-    for(int i = 0; i < mat->razm; i++){
-        for(int j = 0; j < mat->razm; j++){
+    for(int i = 0; i < mat->dimension; i++){
+        for(int j = 0; j < mat->dimension; j++){
             elem = array_el[k];
             k++;
             ptr = (float*)element_get(mat, i, j, &error);
@@ -246,14 +246,14 @@ void run_float_matrix()
     printf("Создание второй матрицы 3x3\n");
     Matrix* mat_2 = matrix_create(3, GetFloatTypeInfo(), &error);
     assert(mat_2 != NULL);
-    ASSERT_EQ(mat_2->razm, 3);
+    ASSERT_EQ(mat_2->dimension, 3);
 
     printf("Добавляем элементы\n");
     float array_el_2[] = {8.14, 1.34, 7.1, 2.01, 4.73, 3.9, 5.25, 6.41, 9.02};
     float elem_2;
     k = 0;
-    for(int i = 0; i < mat_2->razm; i++){
-        for(int j = 0; j < mat_2->razm; j++){
+    for(int i = 0; i < mat_2->dimension; i++){
+        for(int j = 0; j < mat_2->dimension; j++){
             elem_2 = array_el_2[k];
             k++;
             error = push_el_matrix(mat_2, &elem_2, i, j);
@@ -261,8 +261,8 @@ void run_float_matrix()
     }
     error = print_matrix(mat_2);
     k = 0;
-    for(int i = 0; i < mat_2->razm; i++){
-        for(int j = 0; j < mat_2->razm; j++){
+    for(int i = 0; i < mat_2->dimension; i++){
+        for(int j = 0; j < mat_2->dimension; j++){
             elem_2 = array_el_2[k];
             k++;
             ptr = (float*)element_get(mat_2, i, j, &error);
@@ -277,10 +277,10 @@ void run_float_matrix()
     }
     error = print_matrix(mult);
 
-    for(int i = 0; i < mat->razm; i++){
-        for(int j = 0; j < mat->razm; j++){
+    for(int i = 0; i < mat->dimension; i++){
+        for(int j = 0; j < mat->dimension; j++){
             float sum = 0.0;
-            for(int k = 0; k < mat -> razm; k++){
+            for(int k = 0; k < mat -> dimension; k++){
                 ptr = (float*)element_get(mat, i, k, &error);
                 ptr_2 = (float*)element_get(mat_2, k, j, &error);
                 sum += *ptr * *ptr_2;
@@ -297,8 +297,8 @@ void run_float_matrix()
     }
     error = print_matrix(sum);
 
-    for(int i = 0; i < mat->razm; i++){
-        for(int j = 0; j < mat->razm; j++){
+    for(int i = 0; i < mat->dimension; i++){
+        for(int j = 0; j < mat->dimension; j++){
             ptr = (float*)element_get(mat, i, j, &error);
             ptr_2 = (float*)element_get(mat_2, i, j, &error);
             ptr_3 = (float*)element_get(sum, i, j, &error);
@@ -315,8 +315,8 @@ void run_float_matrix()
     }
     error = print_matrix(transp);
 
-    for(int i = 0; i < mat->razm; i++){
-        for(int j = 0; j < mat->razm; j++){
+    for(int i = 0; i < mat->dimension; i++){
+        for(int j = 0; j < mat->dimension; j++){
             ptr = (float*)element_get(mat, i, j, &error);
             ptr_2 = (float*)element_get(transp, j, i, &error);
             ASSERT_EQ(*ptr, *ptr_2);
@@ -329,8 +329,8 @@ void run_float_matrix()
         print_matrix_error(error);
     }
     k = 0;
-    for(int i = 0; i < mat_2->razm; i++){
-        for(int j = 0; j < mat_2->razm; j++){
+    for(int i = 0; i < mat_2->dimension; i++){
+        for(int j = 0; j < mat_2->dimension; j++){
             elem = array_el[k];
             k++;
             error = push_el_matrix(mat_2, &elem, i, j);
@@ -342,8 +342,8 @@ void run_float_matrix()
     }
     error = print_matrix(mat);
 
-    for(int i = 0; i < mat -> razm; i++){
-        for(int j = 0; j < mat -> razm; j++){
+    for(int i = 0; i < mat -> dimension; i++){
+        for(int j = 0; j < mat -> dimension; j++){
             ptr = (float*)element_get(mat, i, j, &error);
             ptr_2 = (float*)element_get(mat_2, i, j, &error);
             ASSERT_EQ(*ptr, *ptr_2 * 3);
@@ -409,7 +409,7 @@ void run_complex_matrix()
         print_matrix_error(error);
     }
     assert(mat != NULL);
-    ASSERT_EQ(mat->razm, 3);
+    ASSERT_EQ(mat->dimension, 3);
 
     printf("Добавляем элементы\n");
     int array_re[] = {-1, 5, -7, 2, 4, 9, 8, 7, -3};
@@ -417,8 +417,8 @@ void run_complex_matrix()
     int elem_re, elem_im;
     int k = 0;
     Complex *ptr, *ptr_2, *ptr_3, *ptr_4;
-    for(int i = 0; i < mat->razm; i++){
-        for(int j = 0; j < mat->razm; j++){
+    for(int i = 0; i < mat->dimension; i++){
+        for(int j = 0; j < mat->dimension; j++){
             elem_re = array_re[k];
             elem_im = array_im[k];
             k++;
@@ -431,8 +431,8 @@ void run_complex_matrix()
     }
     error = print_matrix(mat);
     k = 0;
-    for(int i = 0; i < mat->razm; i++){
-        for(int j = 0; j < mat->razm; j++){
+    for(int i = 0; i < mat->dimension; i++){
+        for(int j = 0; j < mat->dimension; j++){
             elem_re = array_re[k];
             elem_im = array_im[k];
             k++;
@@ -448,15 +448,15 @@ void run_complex_matrix()
     printf("Создание второй матрицы 3x3\n");
     Matrix* mat_2 = matrix_create(3, GetComplexTypeInfo(), &error);
     assert(mat_2 != NULL);
-    ASSERT_EQ(mat_2->razm, 3);
+    ASSERT_EQ(mat_2->dimension, 3);
 
     printf("Добавляем элементы\n");
     int array_re_2[] = {8, 1, 7, 2, 4, 3, 4, 6, 9};
     int array_im_2[] = {-1, 2, -7, 4, 3, 8, -6, 5, 1};
     int elem_re_2, elem_im_2;
     k = 0;
-    for(int i = 0; i < mat_2->razm; i++){
-        for(int j = 0; j < mat_2->razm; j++){
+    for(int i = 0; i < mat_2->dimension; i++){
+        for(int j = 0; j < mat_2->dimension; j++){
             elem_re_2 = array_re_2[k];
             elem_im_2 = array_im_2[k];
             k++;
@@ -466,8 +466,8 @@ void run_complex_matrix()
     }
     error = print_matrix(mat_2);
     k = 0;
-    for(int i = 0; i < mat_2->razm; i++){
-        for(int j = 0; j < mat_2->razm; j++){
+    for(int i = 0; i < mat_2->dimension; i++){
+        for(int j = 0; j < mat_2->dimension; j++){
             elem_re_2 = array_re_2[k];
             elem_im_2 = array_im_2[k];
             k++;
@@ -483,11 +483,11 @@ void run_complex_matrix()
         print_matrix_error(error);
     }
     error = print_matrix(mult);
-    for(int i = 0; i < mat->razm; i++){
-        for(int j = 0; j < mat->razm; j++){
+    for(int i = 0; i < mat->dimension; i++){
+        for(int j = 0; j < mat->dimension; j++){
             int sum = 0;
             int sum_2 = 0;
-            for(int k = 0; k < mat -> razm; k++){
+            for(int k = 0; k < mat -> dimension; k++){
                 ptr = (Complex*)element_get(mat, i, k, &error);
                 ptr_2 = (Complex*)element_get(mat_2, k, j, &error);
                 sum += ptr->real * ptr_2->real - ptr->imag * ptr_2->imag;
@@ -508,8 +508,8 @@ void run_complex_matrix()
         print_matrix_error(error);
     }
     error = print_matrix(sum);
-    for(int i = 0; i < mat->razm; i++){
-        for(int j = 0; j < mat->razm; j++){
+    for(int i = 0; i < mat->dimension; i++){
+        for(int j = 0; j < mat->dimension; j++){
             ptr = (Complex*)element_get(mat, i, j, &error);
             ptr_2 = (Complex*)element_get(mat_2, i, j, &error);
             ptr_3 = (Complex*)element_get(sum, i, j, &error);
@@ -526,8 +526,8 @@ void run_complex_matrix()
         print_matrix_error(error);
     }
     error = print_matrix(transp);
-    for(int i = 0; i < mat->razm; i++){
-        for(int j = 0; j < mat->razm; j++){
+    for(int i = 0; i < mat->dimension; i++){
+        for(int j = 0; j < mat->dimension; j++){
             ptr = (Complex*)element_get(mat, i, j, &error);
             ptr_2 = (Complex*)element_get(transp, j, i, &error);
             ASSERT_EQ(ptr->real, ptr_2->real);
@@ -538,8 +538,8 @@ void run_complex_matrix()
     printf("Умножение на скаляр 3\n");
     mat_2 = matrix_create(3, GetComplexTypeInfo(), &error);
     k = 0;
-    for(int i = 0; i < mat_2->razm; i++){
-        for(int j = 0; j < mat_2->razm; j++){
+    for(int i = 0; i < mat_2->dimension; i++){
+        for(int j = 0; j < mat_2->dimension; j++){
             elem_re = array_re[k];
             elem_im = array_im[k];
             k++;
@@ -553,8 +553,8 @@ void run_complex_matrix()
     }
     error = print_matrix(mat);
 
-    for(int i = 0; i < mat -> razm; i++){
-        for(int j = 0; j < mat -> razm; j++){
+    for(int i = 0; i < mat -> dimension; i++){
+        for(int j = 0; j < mat -> dimension; j++){
             ptr = (Complex*)element_get(mat, i, j, &error);
             ptr_2 = (Complex*)element_get(mat_2, i, j, &error);
             ASSERT_EQ(ptr->real, ptr_2->real * 3);

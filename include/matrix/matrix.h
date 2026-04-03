@@ -16,11 +16,11 @@ typedef struct {
 
 typedef struct {
     void* data;               
-    size_t razm;              
+    size_t dimension;              
     TypeInfo* typeInfo;
 } Matrix;
 
-Matrix* matrix_create(int razm, TypeInfo* typeInfo, MatrixErrors* operationResult);
+Matrix* matrix_create(int dimension, TypeInfo* typeInfo, MatrixErrors* operationResult);
 MatrixErrors push_el_matrix(Matrix* mat, void* item, int row, int col);
 void* element_get(Matrix* mat, int row, int col, MatrixErrors* operationResult);
 Matrix* matrix_add(Matrix* mat_1, Matrix* mat_2, MatrixErrors* operationResult);
