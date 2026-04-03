@@ -2,7 +2,7 @@
 #include <assert.h>
 #include "../include/matrix/matrix.h"
 #include "../include/complex.h"
-#include "../include/func.h"
+#include "../include/interface.h"
 #include "../include/matrix/matrix_int.h"
 #include "../include/matrix/matrix_float.h"
 #include "../include/matrix/matrix_complex.h"

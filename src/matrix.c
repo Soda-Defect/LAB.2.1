@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "../include/matrix/matrix.h"
-#include "../include/func.h"
+#include "../include/interface.h"
 
 Matrix* matrix_create(int dimension, TypeInfo* typeInfo, MatrixErrors* operationResult){
 
