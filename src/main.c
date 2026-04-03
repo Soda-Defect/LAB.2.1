@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <locale.h>
-#include "../include/func.h"
+#include "../include/interface.h"
 #include "../include/matrix/matrix_error.h"
 
 

@@ -8,11 +8,11 @@ all: $(TARGET)
 $(TARGET): $(OBJS)
 	$(CC) $(OBJS) -o $(TARGET)
 
-main.o: src/main.c include/func.h
+main.o: src/main.c include/interface.h
 	$(CC) $(CFLAGS) -c src/main.c
 
-func.o: src/func.c include/func.h include/matrix/matrix_complex.h include/matrix/matrix_int.h include/matrix/matrix_float.h include/complex.h
-	$(CC) $(CFLAGS) -c src/func.c
+interface.o: src/interface.c include/interface.h include/matrix/matrix_complex.h include/matrix/matrix_int.h include/matrix/matrix_float.h include/complex.h
+	$(CC) $(CFLAGS) -c src/interface.c
 
 matrix.o: src/matrix.c include/matrix/matrix.h
 	$(CC) $(CFLAGS) -c src/matrix.c
