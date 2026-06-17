@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -std=c99 -g
 TARGET = matrix
-OBJS = main.o matrix.o matrix_int.o matrix_float.o complex.o matrix_complex.o func.o tests.o 
+OBJS = main.o matrix.o matrix_int.o matrix_float.o complex.o matrix_complex.o interface.o tests.o 
 
 all: $(TARGET)
 
