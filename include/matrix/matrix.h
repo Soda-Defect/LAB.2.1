@@ -21,8 +21,8 @@ typedef struct {
 } Matrix;
 
 Matrix* matrix_create(int dimension, TypeInfo* typeInfo, MatrixErrors* operationResult);
-MatrixErrors push_el_matrix(Matrix* mat, void* item, int row, int col);
-void* element_get(Matrix* mat, int row, int col, MatrixErrors* operationResult);
+MatrixErrors push_el_matrix(Matrix* mat, void* item, size_t row, size_t col);
+void* element_get(Matrix* mat, size_t row, size_t col, MatrixErrors* operationResult);
 Matrix* matrix_add(Matrix* mat_1, Matrix* mat_2, MatrixErrors* operationResult);
 Matrix* matrix_mult(Matrix* mat_1, Matrix* mat_2, MatrixErrors* operationResult);
 Matrix* matrix_transp(Matrix* mat_1, MatrixErrors* operationResult);

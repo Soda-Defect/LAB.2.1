@@ -124,11 +124,11 @@ void int_input(Matrix* mat)
 {
     int value, success;
     char term;
-    for(int i = 0; i < mat -> dimension; i++){
-        for(int j = 0; j < mat -> dimension; j++){
+    for(size_t i = 0; i < mat -> dimension; i++){
+        for(size_t j = 0; j < mat -> dimension; j++){
             do{
                 success = 0;
-                printf("Введите элемент[%d][%d] целого типа:\n", i, j);
+                printf("Введите элемент[%zu][%zu] целого типа:\n", i, j);
                 if (scanf("%d%c", &value, &term) == 2 && term == '\n') {
                     success = 1;
                     push_el_matrix(mat, &value, i, j);
@@ -146,11 +146,11 @@ void float_input(Matrix* mat)
     float value;
     int success;
     char term;
-    for(int i = 0; i < mat -> dimension; i++){
-        for(int j = 0; j < mat -> dimension; j++){
+    for(size_t i = 0; i < mat -> dimension; i++){
+        for(size_t j = 0; j < mat -> dimension; j++){
             do{
                 success = 0;
-                printf("Введите элемент[%d][%d] вещественного типа:\n", i, j);
+                printf("Введите элемент[%zu][%zu] вещественного типа:\n", i, j);
                 if (scanf("%f%c", &value, &term) == 2 && term == '\n') {
                     success = 1;
                     push_el_matrix(mat, &value, i, j);
@@ -167,11 +167,11 @@ void complex_input(Matrix* mat)
 {
     int re, im, success;
     char sign, i_char, term;
-    for(int i = 0; i < mat -> dimension; i++){
-        for(int j = 0; j < mat -> dimension; j++){
+    for(size_t i = 0; i < mat -> dimension; i++){
+        for(size_t j = 0; j < mat -> dimension; j++){
             do{
                 success = 0;
-                printf("Введите элемент[%d][%d] в формате a+bi: \n", i, j);
+                printf("Введите элемент[%zu][%zu] в формате a+bi: \n", i, j);
                 if (scanf("%d%c%d%c%c", &re, &sign, &im, &i_char, &term) == 5 && term == '\n'){
                     if(i_char != 'i'){
                         error_print(7);

@@ -10,18 +10,18 @@
 
 #define ASSERT_EQ(x, y) assert((x) == (y))
 
-void test_create(int dimension, void* array_el, TypeInfo* typeInfo)
+void test_create(size_t dimension, void* array_el, TypeInfo* typeInfo)
 {
     printf("\n=== “естирование создани€ матрицы ===\n");
 
     MatrixErrors error;
 
     if (typeInfo->size == sizeof(int)) {
-        printf("\nmatrix_create: создаем матрицу типа int размерностью %d\n", dimension);
+        printf("\nmatrix_create: создаем матрицу типа int размерностью %zu\n", dimension);
     } else if (typeInfo->size == sizeof(float)) {
-        printf("\nmatrix_create: создаем матрицу типа float размерностью %d\n", dimension);
+        printf("\nmatrix_create: создаем матрицу типа float размерностью %zu\n", dimension);
     } else if (typeInfo->size == sizeof(Complex)) {
-        printf("\nmatrix_create: создаем матрицу типа complex размерностью %d\n", dimension);
+        printf("\nmatrix_create: создаем матрицу типа complex размерностью %zu\n", dimension);
     }
     Matrix* mat = matrix_create(dimension, typeInfo, &error);
     assert(mat != NULL);
@@ -162,7 +162,7 @@ void test_operation(void* array_el, void* array_el_2, TypeInfo* typeInfo)
                 mat->typeInfo->add(sum, sum, mult_el);
                 free(mult_el);
             }
-            printf("\nmatrix_mult: элемент [%zu][%zu]. ", i, j, sum);
+            printf("\nmatrix_mult: элемент [%zu][%zu]. ", i, j);
             printf("ќжидаемый результат:");
             mult->typeInfo->print(sum);
             printf(" ѕолученный результат:");
