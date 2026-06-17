@@ -9,193 +9,353 @@
 
 #define ASSERT_EQ(x, y) assert((x) == (y))
 
+void test_create(int dimension, void* array_el, TypeInfo* typeInfo)
+{
+    printf("\n=== Тестирование создания матрицы ===\n");
+
+    MatrixErrors error;
+
+    if (typeInfo->size == sizeof(int)) {
+        printf("matrix_create: создаем матрицу типа int размерностью %d\n", dimension);
+    } else if (typeInfo->size == sizeof(float)) {
+        printf("matrix_create: создаем матрицу типа float размерностью %d\n", dimension);
+    } else if (typeInfo->size == sizeof(Complex)) {
+        printf("matrix_create: создаем матрицу типа complex размерностью %d\n", dimension);
+    }
+    Matrix* mat = matrix_create(dimension, typeInfo, &error);
+    assert(mat != NULL);
+    ASSERT_EQ(mat->dimension, dimension);
+
+    printf("Добавляем элементы (функция push_el_matrix)\n");
+    for(int i = 0; i < mat->dimension; i++){
+        for(int j = 0; j < mat->dimension; j++){
+            void* elem_ptr = (char*)array_el + (i * mat->dimension + j) * typeInfo->size;
+            if (typeInfo->size == sizeof(int)) {
+                int elem = *(int*)elem_ptr;
+                error = push_el_matrix(mat, elem_ptr, i, j);
+                printf("push_el_matrix: Добавляем элемент %d в [%d][%d] матрицы типа int размерности %d\n", elem, i, j, dimension);
+            } else if (typeInfo->size == sizeof(float)) {
+                float elem = *(float*)elem_ptr;
+                error = push_el_matrix(mat, elem_ptr, i, j);
+                printf("push_el_matrix: Добавляем элемент %.2f в [%d][%d] матрицы типа float размерности %d\n", elem, i, j, dimension);
+            } else if (typeInfo->size == sizeof(Complex)) {
+                Complex elem = *(Complex*)elem_ptr;
+                error = push_el_matrix(mat, elem_ptr, i, j);
+                printf("push_el_matrix: Добавляем элемент (%d + %di) в [%d][%d] матрицы типа complex размерности %d\n", elem.real, 
+                    elem.imag, i, j, dimension);
+            }
+        }
+    }
+    print_matrix(mat);
+    for(int i = 0; i < mat->dimension; i++){
+        for(int j = 0; j < mat->dimension; j++){
+            void* elem_ptr = (char*)array_el + (i * mat->dimension + j) * typeInfo->size;
+            void* ptr = element_get(mat, i, j, &error);
+            if (typeInfo->size == sizeof(int)){
+                int elem = *(int*)elem_ptr;
+                printf("element_get: Берем элемент %d из [%d][%d] матрицы типа int размерности %d\n", elem, i, j, dimension); 
+                ASSERT_EQ(*(int*)ptr, elem);     
+            }else if(typeInfo->size == sizeof(float)){
+                float elem = *(float*)elem_ptr;
+                printf("element_get: Берем элемент %.2f из [%d][%d] матрицы типа float размерности %d\n", elem, i, j, dimension); 
+                ASSERT_EQ(*(float*)ptr, elem);     
+            }else if (typeInfo->size == sizeof(Complex)) {
+                Complex elem = *(Complex*)elem_ptr;
+                Complex elem_mat = *(Complex*)ptr;
+                error = push_el_matrix(mat, elem_ptr, i, j);
+                printf("element_get: Берем элемент (%d + %di) из [%d][%d] матрицы типа complex размерности %d\n", elem.real, 
+                    elem.imag, i, j, dimension);
+                ASSERT_EQ(elem_mat.real, elem.real);  
+                ASSERT_EQ(elem_mat.imag, elem.imag);  
+            }
+        }
+    }
+    matrix_free(mat);
+
+    printf("\n=== Обработка ошибок создания===\n");
+    
+    printf("\nПопытка создать матрицу с отрицательным размером (Ошибка INVALID_MATRIX_SIZE)\n");
+    mat = matrix_create(-3, typeInfo, &error);
+    ASSERT_EQ(error, INVALID_MATRIX_SIZE);
+    print_matrix_error(error);
+    ASSERT_EQ(mat, NULL);
+
+    printf("\nПопытка создать матрицу без typeinfo (Ошибка INVALID_TYPE_INFO)\n");
+    mat = matrix_create(3, NULL, &error);
+    ASSERT_EQ(error, INVALID_TYPE_INFO);
+    print_matrix_error(error);
+    ASSERT_EQ(mat, NULL);
+
+    printf("\nПопытка занести в матрицу элемент в несуществующую ячейку [-1][-2] (Ошибка INVALID_MATRIX_INDEX)\n");
+    int elem = 3;
+    mat = matrix_create(3, typeInfo, &error);
+    error = push_el_matrix(mat, &elem, -1, -2);
+    ASSERT_EQ(error, INVALID_MATRIX_INDEX);
+    print_matrix_error(error);
+
+    printf("\nПопытка занести в матрицу элемент в несуществующую ячейку [4][4] (Ошибка INVALID_MATRIX_INDEX)\n");
+    mat = matrix_create(3, typeInfo, &error);
+    error = push_el_matrix(mat, &elem, 4, 4);
+    ASSERT_EQ(error, INVALID_MATRIX_INDEX);
+    print_matrix_error(error);
+
+    printf("\nПопытка занести в пустую матрицу элемент(Ошибка MATRIX_NOT_DEFINED)\n");
+    mat = NULL;
+    error = push_el_matrix(mat, &elem, 0, 0);
+    ASSERT_EQ(error, MATRIX_NOT_DEFINED);
+    print_matrix_error(error);
+
+    printf("\nПопытка узнать элемент матрицы из несуществующей ячейки [-1][-2] (Ошибка INVALID_MATRIX_INDEX)\n");
+    element_get(mat, -1, -2, &error);
+    ASSERT_EQ(error, INVALID_MATRIX_INDEX);
+    print_matrix_error(error);
+
+    printf("\nПопытка узнать элемент матрицы из несуществующей ячейки [4][4] (Ошибка INVALID_MATRIX_INDEX)\n");
+    element_get(mat, 4, 4, &error);
+    ASSERT_EQ(error, INVALID_MATRIX_INDEX);
+    print_matrix_error(error);
+
+    printf("\nПопытка узнать элемент из пустой матрицы (Ошибка MATRIX_NOT_DEFINED)\n");
+    mat = matrix_create(3, typeInfo, &error);
+    elem = NULL;
+    error = push_el_matrix(mat, &elem, 0, 0);
+    ASSERT_EQ(error, MATRIX_NOT_DEFINED);
+    print_matrix_error(error);
+}
+
+void test_operation(void* array_el, void* array_el_2, TypeInfo* typeInfo)
+{
+    printf("\n=== Тестирование операций матрицы ===\n");
+
+    MatrixErrors error;
+
+    Matrix* mat = matrix_create(3, typeInfo, &error);
+    for(int i = 0; i < mat->dimension; i++){
+        for(int j = 0; j < mat->dimension; j++){
+            void* elem_ptr = (char*)array_el + (i * mat->dimension + j) * typeInfo->size;
+            if (typeInfo->size == sizeof(int)) {
+                int elem = *(int*)elem_ptr;
+                error = push_el_matrix(mat, elem_ptr, i, j);
+            } else if (typeInfo->size == sizeof(float)) {
+                float elem = *(float*)elem_ptr;
+                error = push_el_matrix(mat, elem_ptr, i, j);
+            } else if (typeInfo->size == sizeof(Complex)) {
+                Complex elem = *(Complex*)elem_ptr;
+                error = push_el_matrix(mat, elem_ptr, i, j);
+            }
+        }
+    }
+    printf("\nПервая матрица умножения\n");
+    print_matrix(mat);
+
+    Matrix* mat_2 = matrix_create(3, typeInfo, &error);
+    for(int i = 0; i < mat_2->dimension; i++){
+        for(int j = 0; j < mat_2->dimension; j++){
+            void* elem_ptr = (char*)array_el_2 + (i * mat_2->dimension + j) * typeInfo->size;
+            if (typeInfo->size == sizeof(int)) {
+                int elem = *(int*)elem_ptr;
+                error = push_el_matrix(mat_2, elem_ptr, i, j);
+            } else if (typeInfo->size == sizeof(float)) {
+                float elem = *(float*)elem_ptr;
+                error = push_el_matrix(mat_2, elem_ptr, i, j);
+            } else if (typeInfo->size == sizeof(Complex)) {
+                Complex elem = *(Complex*)elem_ptr;
+                error = push_el_matrix(mat_2, elem_ptr, i, j);
+            }
+        }
+    }
+    printf("\nВторая матрица умножения\n");
+    print_matrix(mat_2);
+
+    printf("Умножение матриц (функция matrix_mult)\n");
+    Matrix* mult = matrix_mult(mat, mat_2, &error);
+
+    for(int i = 0; i < mat->dimension; i++){
+        for(int j = 0; j < mat->dimension; j++){
+            if (typeInfo->size == sizeof(int)){
+                int sum = 0;
+                for(int k = 0; k < mat -> dimension; k++){
+                    int ptr = *(int*)element_get(mat, i, k, &error);
+                    int ptr_2 = *(int*)element_get(mat_2, k, j, &error);
+                    sum += ptr * ptr;
+                }
+                int ptr_3 = *(int*)element_get(mult, i, j, &error);
+                printf("matrix_mult: элемент [%d][%d]. Ожидаемый результат %d Полученный: %d\n", i, j, ptr, sum);
+                ASSERT_EQ(ptr, sum);
+            } else if((typeInfo->size == sizeof(float))){
+                float sum = 0;
+                for(int k = 0; k < mat -> dimension; k++){
+                    float ptr = *(float*)element_get(mat, i, k, &error);
+                    float ptr_2 = *(float*)element_get(mat_2, k, j, &error);
+                    sum += ptr * ptr;
+                }
+                float ptr_3 = *(float*)element_get(mult, i, j, &error);
+                printf("matrix_mult: элемент [%d][%d]. Ожидаемый результат %.2f Полученный: %.2f\n", i, j, ptr, sum);
+                ASSERT_EQ(ptr, sum);
+            } else if((typeInfo->size == sizeof(Complex))){
+                int sum = 0;
+                int sum_2 = 0;
+                for(int k = 0; k < mat -> dimension; k++){
+                    Complex ptr = *(Complex*)element_get(mat, i, k, &error);
+                    Complex ptr_2 = *(Complex*)element_get(mat_2, k, j, &error);
+                    sum += ptr->real * ptr_2->real - ptr->imag * ptr_2->imag;
+                    sum_2 += ptr->real * ptr_2->imag + ptr_2->real * ptr->imag;
+                }
+                Complex ptr_3 = *(Complex*)element_get(mult, i, j, &error);
+                printf("matrix_mult: элемент [%d][%d]. Ожидаемый результат (%d + %di) Полученный: %d\n", i, j, ptr->real, 
+                    ptr_3->imag, sum);
+                ASSERT_EQ(ptr_3->real, sum);
+                ASSERT_EQ(ptr_3->imag, sum_2);
+            }
+        }
+    }
+
+    printf("Сложение матриц (функция matrix_add)\n");
+    Matrix* sum = matrix_add(mat, mat_2, &error);
+    printf("\nПервая матрица сложения\n");
+    print_matrix(mat);
+    printf("\nВторая матрица сложения\n");
+    print_matrix(mat_2);
+
+    for(int i = 0; i < mat->dimension; i++){
+        for(int j = 0; j < mat->dimension; j++){
+            if (typeInfo->size == sizeof(int)){
+                int ptr = *(int*)element_get(mat, i, j, &error);
+                int ptr_2 = *(int*)element_get(mat_2, i, j, &error);
+                int ptr_3 = *(int*)element_get(sum, i, j, &error);
+                printf("matrix_add: элемент [%d][%d]. Ожидаемый результат %d Полученный: %d\n", i, j, ptr, ptr + ptr);
+                ASSERT_EQ(ptr, ptr + ptr);
+            } else if((typeInfo->size == sizeof(float))){
+                float ptr = *(float*)element_get(mat, i, j, &error);
+                float ptr_2 = *(float*)element_get(mat_2, i, j, &error);
+                float ptr_3 = *(float*)element_get(sum, i, j, &error);
+                printf("matrix_add: элемент [%d][%d]. Ожидаемый результат %.2f Полученный: %.2f\n", i, j, ptr, ptr + ptr);
+                ASSERT_EQ(ptr, ptr + ptr);
+            } else if((typeInfo->size == sizeof(Complex))){
+                Complex ptr = *(Complex*)element_get(mat, i, j, &error);
+                Complex ptr_2 = *(Complex*)element_get(mat_2, i, j, &error);
+                Complex ptr_3 = *(Complex*)element_get(sum, i, j, &error);
+                printf("matrix_add: элемент [%d][%d]. Ожидаемый результат (%d + %di) Полученный: (%d + %di)\n", i, j, ptr_3->real, 
+                    ptr_3->imag, ptr->real + ptr_2->real, ptr->imag + ptr_2->imag);
+                ASSERT_EQ(ptr_3->real, ptr->real + ptr_2->real);
+                ASSERT_EQ(ptr_3->imag, ptr->imag + ptr_2->imag);
+            }
+        }
+    }
+
+    printf("Транспонироание матрицы (функция matrix_transp)\n");
+    Matrix* transp = matrix_transp(mat, &error);
+    error = print_matrix(transp);
+    for(int i = 0; i < mat->dimension; i++){
+        for(int j = 0; j < mat->dimension; j++){
+            if (typeInfo->size == sizeof(int)){
+                int ptr = *(int*)element_get(mat, i, j, &error);
+                int ptr_2 = *(int*)element_get(transp, j, i, &error);
+                printf("matrix_transp: элемент [%d][%d]. Ожидаемый результат %d Полученный: %d\n", i, j, ptr, ptr);
+                ASSERT_EQ(ptr, ptr);
+            } else if((typeInfo->size == sizeof(float))){
+                float ptr = *(float*)element_get(mat, i, j, &error);
+                float ptr_2 = *(float*)element_get(transp, j, i, &error);
+                printf("matrix_transp: элемент [%d][%d]. Ожидаемый результат %.2f Полученный: %.2f\n", i, j, ptr, ptr);
+                ASSERT_EQ(ptr, ptr);
+            } else if((typeInfo->size == sizeof(Complex))){
+                Complex ptr = *(Complex*)element_get(mat, i, j, &error);
+                Complex ptr_2 = *(Complex*)element_get(transp, j, i, &error);
+                printf("matrix_transp: элемент [%d][%d]. Ожидаемый результат (%d + %di) Полученный: (%d + %di)\n", i, j, ptr->real, 
+                    ptr->imag, ptr->real, ptr->imag);
+                ASSERT_EQ(ptr->real, ptr->real);
+                ASSERT_EQ(ptr->imag, ptr->imag);
+            }
+        }
+    }
+
+    matrix_free(mat_2);
+    printf("Умножение на скаляр 3 (matrix_multiply_const)\n");
+    mat_2 = matrix_create(3, GetIntTypeInfo(), &error);
+    Matrix* mat_2 = matrix_create(3, typeInfo, &error);
+    for(int i = 0; i < mat_2->dimension; i++){
+        for(int j = 0; j < mat_2->dimension; j++){
+            void* elem_ptr = (char*)array_el + (i * mat_2->dimension + j) * typeInfo->size;
+            if (typeInfo->size == sizeof(int)) {
+                int elem = *(int*)elem_ptr;
+                error = push_el_matrix(mat_2, elem_ptr, i, j);
+            } else if (typeInfo->size == sizeof(float)) {
+                float elem = *(float*)elem_ptr;
+                error = push_el_matrix(mat_2, elem_ptr, i, j);
+            } else if (typeInfo->size == sizeof(Complex)) {
+                Complex elem = *(Complex*)elem_ptr;
+                error = push_el_matrix(mat_2, elem_ptr, i, j);
+            }
+        }
+    }
+    matrix_multiply_const(mat, 3);
+     for(int i = 0; i < mat -> dimension; i++){
+        for(int j = 0; j < mat -> dimension; j++){
+            if (typeInfo->size == sizeof(int)){
+                int ptr = *(int*)element_get(mat_2, i, j, &error);
+                int ptr_2 = *(int*)element_get(mat, i, j, &error);
+                printf("matrix_multiply_const: элемент [%d][%d] умноженный на 3. Ожидаемый результат %d Полученный: %d\n", i, j, ptr * 3,
+                     ptr_2);
+                ASSERT_EQ(ptr * 3, ptr_2);
+            } else if (typeInfo->size == sizeof(float)){
+                float ptr = *(float*)element_get(mat_2, i, j, &error);
+                float ptr_2 = *(float*)element_get(mat, i, j, &error);
+                printf("matrix_multiply_const: элемент [%d][%d] умноженный на 3. Ожидаемый результат %.2f Полученный: %.2f\n", i, j, 
+                    ptr * 3, ptr_2);
+                ASSERT_EQ(ptr * 3, ptr_2);
+            } else if (typeInfo->size == sizeof(Complex)){
+                Complex ptr = *(Complex*)element_get(mat_2, i, j, &error);
+                Complex ptr_2 = *(Complex*)element_get(mat, i, j, &error);
+                printf("matrix_multiply_const: элемент [%d][%d] умноженный на 3. Ожидаемый результат (%d + %di) Полученный:(%d + %di)\n", 
+                    i, j, ptr.real * 3, ptr.imag * 3, ptr_2.real, ptr_2.imag);
+                ASSERT_EQ(ptr.real * 3, ptr_2.real);
+                ASSERT_EQ(ptr.imag * 3, ptr_2.imag);
+            }
+        }
+    }
+
+    printf("\n=== Обработка ошибок операций ===\n");
+
+    printf("\nПопытка сложить матрицы разной размерности (MATRIX_SIZE_MISMATCH)\n");
+    mat_2 = matrix_create(4, typeInfo, &error);
+    sum = matrix_add(mat, mat_2, &error);
+    ASSERT_EQ(error, MATRIX_SIZE_MISMATCH);
+    print_matrix_error(error);
+    ASSERT_EQ(sum, NULL);
+
+    printf("\nПопытка умножить матрицы разной размерности (MATRIX_SIZE_MISMATCH)\n");
+    mult = matrix_mult(mat, mat_2, &error);
+    ASSERT_EQ(error, MATRIX_SIZE_MISMATCH);
+    print_matrix_error(error);
+    ASSERT_EQ(mult, NULL);
+
+    printf("\nПопытка сложить матрицы разных типов (INCOMPATIBLE_MATRIX_TYPES)\n");
+    mat_2 = matrix_create(4, GetIntTypeInfo(), &error);
+    mat = matrix_create(4, GetFloatTypeInfo(), &error);
+    sum = matrix_add(mat, mat_2, &error);
+    ASSERT_EQ(error, INCOMPATIBLE_MATRIX_TYPES);
+    print_matrix_error(error);
+    ASSERT_EQ(sum, NULL);
+
+    printf("\nПопытка умножить матрицы разных типов (INCOMPATIBLE_MATRIX_TYPES)\n");
+    mat_2 = matrix_create(4, GetIntTypeInfo(), &error);
+    mat = matrix_create(4, GetFloatTypeInfo(), &error);
+    mult = matrix_mult(mat, mat_2, &error);
+    ASSERT_EQ(error, INCOMPATIBLE_MATRIX_TYPES);
+    print_matrix_error(error);
+    ASSERT_EQ(sum, NULL);
+}
+
 void run_int_matrix()
 {
     printf("\n=== Тестирование матрицы целых чисел ===\n");
 
-    MatrixErrors error;
-
-    printf("Создание матрицы 3x3\n");
-    Matrix* mat = matrix_create(3, GetIntTypeInfo(), &error);
-    if(error != MATRIX_OPERATION_OK){
-        print_matrix_error(error);
-    }
-    assert(mat != NULL);
-    ASSERT_EQ(mat->dimension, 3);
-
-    printf("Добавляем элементы\n");
     int array_el[] = {1, 5, 7, 2, 4, 9, 8, 0, 3};
-    int elem;
-    int k = 0;
-    int *ptr, *ptr_2, *ptr_3, *ptr_4;
-    for(int i = 0; i < mat->dimension; i++){
-        for(int j = 0; j < mat->dimension; j++){
-            elem = array_el[k];
-            k++;
-            error = push_el_matrix(mat, &elem, i, j);
-        }
-    }
-    if(error != MATRIX_OPERATION_OK){
-        print_matrix_error(error);
-    }
-    error = print_matrix(mat);
-    k = 0;
-    for(int i = 0; i < mat->dimension; i++){
-        for(int j = 0; j < mat->dimension; j++){
-            elem = array_el[k];
-            k++;
-            ptr = (int*)element_get(mat, i, j, &error);
-            ASSERT_EQ(*ptr, elem);
-        }
-    }
-    if(error != MATRIX_OPERATION_OK){
-        print_matrix_error(error);
-    }
-
-    printf("Создание второй матрицы 3x3\n");
-    Matrix* mat_2 = matrix_create(3, GetIntTypeInfo(), &error);
-    assert(mat_2 != NULL);
-    ASSERT_EQ(mat_2->dimension, 3);
-
-    printf("Добавляем элементы\n");
     int array_el_2[] = {8, 0, 7, 2, 4, 3, 0, 6, 9};
-    int elem_2;
-    k = 0;
-    for(int i = 0; i < mat_2->dimension; i++){
-        for(int j = 0; j < mat_2->dimension; j++){
-            elem_2 = array_el_2[k];
-            k++;
-            error = push_el_matrix(mat_2, &elem_2, i, j);
-        }
-    }
-    error = print_matrix(mat_2);
-    k = 0;
-    for(int i = 0; i < mat_2->dimension; i++){
-        for(int j = 0; j < mat_2->dimension; j++){
-            elem_2 = array_el_2[k];
-            k++;
-            ptr = (int*)element_get(mat_2, i, j, &error);
-            ASSERT_EQ(*ptr, elem_2);
-        }
-    }
 
-    printf("Умножение матриц\n");
-    Matrix* mult = matrix_mult(mat, mat_2, &error);
-    if(error != MATRIX_OPERATION_OK){
-        print_matrix_error(error);
-    }
-    error = print_matrix(mult);
-    for(int i = 0; i < mat->dimension; i++){
-        for(int j = 0; j < mat->dimension; j++){
-            int sum = 0;
-            for(int k = 0; k < mat -> dimension; k++){
-                ptr = (int*)element_get(mat, i, k, &error);
-                ptr_2 = (int*)element_get(mat_2, k, j, &error);
-                sum += *ptr * *ptr_2;
-            }
-            ptr_3 = (int*)element_get(mult, i, j, &error);
-            ASSERT_EQ(*ptr_3, sum);
-        }
-    }
+    test_create(3, array_el, GetIntTypeInfo());
 
-    printf("Сложение матриц\n");
-    Matrix* sum = matrix_add(mat, mat_2, &error);
-    if(error != MATRIX_OPERATION_OK){
-        print_matrix_error(error);
-    }
-    error = print_matrix(sum);
-    for(int i = 0; i < mat->dimension; i++){
-        for(int j = 0; j < mat->dimension; j++){
-            ptr = (int*)element_get(mat, i, j, &error);
-            ptr_2 = (int*)element_get(mat_2, i, j, &error);
-            ptr_3 = (int*)element_get(sum, i, j, &error);
-            ASSERT_EQ(*ptr_3, *ptr + *ptr_2);
-        }
-    }
-
-    matrix_free(mat_2);
-
-    printf("Транспонироание матрицы\n");
-    Matrix* transp = matrix_transp(mat, &error);
-    if(error != MATRIX_OPERATION_OK){
-        print_matrix_error(error);
-    }
-    error = print_matrix(transp);
-    for(int i = 0; i < mat->dimension; i++){
-        for(int j = 0; j < mat->dimension; j++){
-            ptr = (int*)element_get(mat, i, j, &error);
-            ptr_2 = (int*)element_get(transp, j, i, &error);
-            ASSERT_EQ(*ptr, *ptr_2);
-        }
-    }
-
-    printf("Умножение на скаляр 3\n");
-    mat_2 = matrix_create(3, GetIntTypeInfo(), &error);
-    k = 0;
-    for(int i = 0; i < mat_2->dimension; i++){
-        for(int j = 0; j < mat_2->dimension; j++){
-            elem = array_el[k];
-            k++;
-            error = push_el_matrix(mat_2, &elem, i, j);
-        }
-    }
-    error = matrix_multiply_const(mat, 3);
-    if(error != MATRIX_OPERATION_OK){
-        print_matrix_error(error);
-    }
-    error = print_matrix(mat);
-
-    for(int i = 0; i < mat -> dimension; i++){
-        for(int j = 0; j < mat -> dimension; j++){
-            ptr = (int*)element_get(mat, i, j, &error);
-            ptr_2 = (int*)element_get(mat_2, i, j, &error);
-            ASSERT_EQ(*ptr, *ptr_2 * 3);
-        }
-    }
-
-    matrix_free(mat_2);
-    matrix_free(mat);
-
-    printf("\n=== Обработка ошибок ===\n");
-
-    printf("\nПопытка создать матрицу с отрицательным размером\n");
-    mat = matrix_create(-3, GetIntTypeInfo(), &error);
-    print_matrix_error(error);
-    ASSERT_EQ(mat, NULL);
-
-    printf("\nПопытка занести в матрицу элемент в несуществующую ячейку [-1][-2]\n");
-    mat = matrix_create(3, GetIntTypeInfo(), &error);
-    error = push_el_matrix(mat, &elem, -1, -2);
-    print_matrix_error(error);
-
-    printf("\nПопытка занести в матрицу элемент в несуществующую ячейку [4][4]\n");
-    error = push_el_matrix(mat, &elem, 4, 4);
-    print_matrix_error(error);
-
-    printf("\nПопытка узнать элемент матрицы из несуществующей ячейки [-1][-2]\n");
-    (int*)element_get(mat, -1, -2, &error);
-    print_matrix_error(error);
-
-    printf("\nПопытка узнать элемент матрицы из несуществующей ячейки [4][4]\n");
-    (int*)element_get(mat, 4, 4, &error);
-    print_matrix_error(error);
-
-    printf("\nПопытка сложить матрицы разной размерности\n");
-    mat_2 = matrix_create(4, GetIntTypeInfo(), &error);
-    sum = matrix_add(mat, mat_2, &error);
-    print_matrix_error(error);
-    ASSERT_EQ(sum, NULL);
-
-    printf("\nПопытка умножить матрицы разной размерности\n");
-    mult = matrix_mult(mat, mat_2, &error);
-    print_matrix_error(error);
-    ASSERT_EQ(mult, NULL);
-
-    matrix_free(mat_2);
-    matrix_free(mat);
-    matrix_free(sum);
-    matrix_free(mult);
-    matrix_free(transp);
+    test_operation(array_el, array_el_2, GetIntTypeInfo());
 
     printf("\n=== Тестирование матрицы целых чисел закончен ===\n");
 }
@@ -203,197 +363,14 @@ void run_int_matrix()
 void run_float_matrix()
 {
     printf("\n=== Тестирование матрицы вещественных чисел ===\n");
-
-    MatrixErrors error;
-
-    printf("Создание матрицы 3x3\n");
-    Matrix* mat = matrix_create(3, GetFloatTypeInfo(), &error);
-    if(error != MATRIX_OPERATION_OK){
-        print_matrix_error(error);
-    }
-    assert(mat != NULL);
-    ASSERT_EQ(mat->dimension, 3);
-
-    printf("Добавляем элементы\n");
+    
     float array_el[] = {1.12, 5.01, 7.2, 2.41, 4.37, 9.04, 8.24, 1.09, 3.1};
-    float elem;
-    int k = 0;
-    float *ptr, *ptr_2, *ptr_3, *ptr_4;
-    for(int i = 0; i < mat->dimension; i++){
-        for(int j = 0; j < mat->dimension; j++){
-            elem = array_el[k];
-            k++;
-            error = push_el_matrix(mat, &elem, i, j);
-        }
-    }
-    if(error != MATRIX_OPERATION_OK){
-        print_matrix_error(error);
-    }
-    error = print_matrix(mat);
-    k = 0;
-    for(int i = 0; i < mat->dimension; i++){
-        for(int j = 0; j < mat->dimension; j++){
-            elem = array_el[k];
-            k++;
-            ptr = (float*)element_get(mat, i, j, &error);
-            ASSERT_EQ(*ptr, elem);
-        }
-    }
-    if(error != MATRIX_OPERATION_OK){
-        print_matrix_error(error);
-    }
-
-    printf("Создание второй матрицы 3x3\n");
-    Matrix* mat_2 = matrix_create(3, GetFloatTypeInfo(), &error);
-    assert(mat_2 != NULL);
-    ASSERT_EQ(mat_2->dimension, 3);
-
-    printf("Добавляем элементы\n");
     float array_el_2[] = {8.14, 1.34, 7.1, 2.01, 4.73, 3.9, 5.25, 6.41, 9.02};
-    float elem_2;
-    k = 0;
-    for(int i = 0; i < mat_2->dimension; i++){
-        for(int j = 0; j < mat_2->dimension; j++){
-            elem_2 = array_el_2[k];
-            k++;
-            error = push_el_matrix(mat_2, &elem_2, i, j);
-        }
-    }
-    error = print_matrix(mat_2);
-    k = 0;
-    for(int i = 0; i < mat_2->dimension; i++){
-        for(int j = 0; j < mat_2->dimension; j++){
-            elem_2 = array_el_2[k];
-            k++;
-            ptr = (float*)element_get(mat_2, i, j, &error);
-            ASSERT_EQ(*ptr, elem_2);
-        }
-    }
 
-    printf("Умножение матриц\n");
-    Matrix* mult = matrix_mult(mat, mat_2, &error);
-    if(error != MATRIX_OPERATION_OK){
-        print_matrix_error(error);
-    }
-    error = print_matrix(mult);
-
-    for(int i = 0; i < mat->dimension; i++){
-        for(int j = 0; j < mat->dimension; j++){
-            float sum = 0.0;
-            for(int k = 0; k < mat -> dimension; k++){
-                ptr = (float*)element_get(mat, i, k, &error);
-                ptr_2 = (float*)element_get(mat_2, k, j, &error);
-                sum += *ptr * *ptr_2;
-            }
-            ptr_3 = (float*)element_get(mult, i, j, &error);
-            ASSERT_EQ(*ptr_3, sum);
-        }
-    }
-
-    printf("Сложение матриц\n");
-    Matrix* sum = matrix_add(mat, mat_2, &error);
-    if(error != MATRIX_OPERATION_OK){
-        print_matrix_error(error);
-    }
-    error = print_matrix(sum);
-
-    for(int i = 0; i < mat->dimension; i++){
-        for(int j = 0; j < mat->dimension; j++){
-            ptr = (float*)element_get(mat, i, j, &error);
-            ptr_2 = (float*)element_get(mat_2, i, j, &error);
-            ptr_3 = (float*)element_get(sum, i, j, &error);
-            ASSERT_EQ(*ptr_3, *ptr + *ptr_2);
-        }
-    }
-
-    matrix_free(mat_2);
-
-    printf("Транспонироание матрицы\n");
-    Matrix* transp = matrix_transp(mat, &error);
-    if(error != MATRIX_OPERATION_OK){
-        print_matrix_error(error);
-    }
-    error = print_matrix(transp);
-
-    for(int i = 0; i < mat->dimension; i++){
-        for(int j = 0; j < mat->dimension; j++){
-            ptr = (float*)element_get(mat, i, j, &error);
-            ptr_2 = (float*)element_get(transp, j, i, &error);
-            ASSERT_EQ(*ptr, *ptr_2);
-        }
-    }
-
-    printf("Умножение на скаляр 3\n");
-    mat_2 = matrix_create(3, GetFloatTypeInfo(), &error);
-    if(error != MATRIX_OPERATION_OK){
-        print_matrix_error(error);
-    }
-    k = 0;
-    for(int i = 0; i < mat_2->dimension; i++){
-        for(int j = 0; j < mat_2->dimension; j++){
-            elem = array_el[k];
-            k++;
-            error = push_el_matrix(mat_2, &elem, i, j);
-        }
-    }
-    error = matrix_multiply_const(mat, 3);
-    if(error != MATRIX_OPERATION_OK){
-        print_matrix_error(error);
-    }
-    error = print_matrix(mat);
-
-    for(int i = 0; i < mat -> dimension; i++){
-        for(int j = 0; j < mat -> dimension; j++){
-            ptr = (float*)element_get(mat, i, j, &error);
-            ptr_2 = (float*)element_get(mat_2, i, j, &error);
-            ASSERT_EQ(*ptr, *ptr_2 * 3);
-        }
-    }
-
-    matrix_free(mat_2);
-    matrix_free(mat);
-
-    printf("\n=== Обработка ошибок ===\n");
-
-    printf("\nПопытка создать матрицу с отрицательным размером\n");
-    mat = matrix_create(-3, GetFloatTypeInfo(), &error);
-    print_matrix_error(error);
-    ASSERT_EQ(mat, NULL);
-
-    printf("\nПопытка занести в матрицу элемент в несуществующую ячейку [-1][-2]\n");
-    mat = matrix_create(3, GetFloatTypeInfo(), &error);
-    error = push_el_matrix(mat, &elem, -1, -2);
-    print_matrix_error(error);
-
-    printf("\nПопытка занести в матрицу элемент в несуществующую ячейку [4][4]\n");
-    error = push_el_matrix(mat, &elem, 4, 4);
-    print_matrix_error(error);
-
-    printf("\nПопытка узнать элемент матрицы из несуществующей ячейки [-1][-2]\n");
-    (float*)element_get(mat, -1, -2, &error);
-    print_matrix_error(error);
-
-    printf("\nПопытка узнать элемент матрицы из несуществующей ячейки [4][4]\n");
-    (float*)element_get(mat, 4, 4, &error);
-    print_matrix_error(error);
-
-    printf("\nПопытка сложить матрицы разной размерности\n");
-    mat_2 = matrix_create(4, GetFloatTypeInfo(), &error);
-    sum = matrix_add(mat, mat_2, &error);
-    print_matrix_error(error);
-    ASSERT_EQ(sum, NULL);
-
-    printf("\nПопытка умножить матрицы разной размерности\n");
-    mult = matrix_mult(mat, mat_2, &error);
-    print_matrix_error(error);
-    ASSERT_EQ(mult, NULL);
-
-    matrix_free(mat_2);
-    matrix_free(mat);
-    matrix_free(sum);
-    matrix_free(mult);
-    matrix_free(transp);
-
+    test_create(3, array_el, GetFloatTypeInfo());
+    
+    test_operation(array_el, array_el_2,GetFloatTypeInfo());
+    
     printf("\n=== Тестирование матрицы вещественных чисел закончен ===\n");
 }
 
@@ -401,211 +378,25 @@ void run_complex_matrix()
 {
     printf("\n=== Тестирование матрицы комплексных чисел ===\n");
 
-    MatrixErrors error;
-
-    printf("Создание матрицы 3x3\n");
-    Matrix* mat = matrix_create(3, GetComplexTypeInfo(), &error);
-    if(error != MATRIX_OPERATION_OK){
-        print_matrix_error(error);
-    }
-    assert(mat != NULL);
-    ASSERT_EQ(mat->dimension, 3);
-
-    printf("Добавляем элементы\n");
     int array_re[] = {-1, 5, -7, 2, 4, 9, 8, 7, -3};
     int array_im[] = {9, -4, 1, 5, -3, 7, 2, 8, 3};
-    int elem_re, elem_im;
-    int k = 0;
-    Complex *ptr, *ptr_2, *ptr_3, *ptr_4;
-    for(int i = 0; i < mat->dimension; i++){
-        for(int j = 0; j < mat->dimension; j++){
-            elem_re = array_re[k];
-            elem_im = array_im[k];
-            k++;
-            Complex c = complex_create(elem_re, elem_im);
-            error = push_el_matrix(mat, &c, i, j);
-        }
-    }
-    if(error != MATRIX_OPERATION_OK){
-        print_matrix_error(error);
-    }
-    error = print_matrix(mat);
-    k = 0;
-    for(int i = 0; i < mat->dimension; i++){
-        for(int j = 0; j < mat->dimension; j++){
-            elem_re = array_re[k];
-            elem_im = array_im[k];
-            k++;
-            ptr = (Complex*)element_get(mat, i, j, &error);
-            ASSERT_EQ(ptr->real, elem_re);
-            ASSERT_EQ(ptr->imag, elem_im);
-        }
-    }
-    if(error != MATRIX_OPERATION_OK){
-        print_matrix_error(error);
+    Complex array_el[9];
+    for(int i = 0; i < 9; i++){
+        array_el[i].real = array_re[i];
+        array_el[i].imag = array_im[i];
     }
 
-    printf("Создание второй матрицы 3x3\n");
-    Matrix* mat_2 = matrix_create(3, GetComplexTypeInfo(), &error);
-    assert(mat_2 != NULL);
-    ASSERT_EQ(mat_2->dimension, 3);
-
-    printf("Добавляем элементы\n");
     int array_re_2[] = {8, 1, 7, 2, 4, 3, 4, 6, 9};
     int array_im_2[] = {-1, 2, -7, 4, 3, 8, -6, 5, 1};
-    int elem_re_2, elem_im_2;
-    k = 0;
-    for(int i = 0; i < mat_2->dimension; i++){
-        for(int j = 0; j < mat_2->dimension; j++){
-            elem_re_2 = array_re_2[k];
-            elem_im_2 = array_im_2[k];
-            k++;
-            Complex c = complex_create(elem_re_2, elem_im_2);
-            error = push_el_matrix(mat_2, &c, i, j);
-        }
-    }
-    error = print_matrix(mat_2);
-    k = 0;
-    for(int i = 0; i < mat_2->dimension; i++){
-        for(int j = 0; j < mat_2->dimension; j++){
-            elem_re_2 = array_re_2[k];
-            elem_im_2 = array_im_2[k];
-            k++;
-            ptr = (Complex*)element_get(mat_2, i, j, &error);
-            ASSERT_EQ(ptr->real, elem_re_2);
-            ASSERT_EQ(ptr->imag, elem_im_2);
-        }
+    Complex array_el_2[9];
+    for(int i = 0; i < 9; i++){
+        array_el_2[i].real = array_re_2[i];
+        array_el_2[i].imag = array_im_2[i];
     }
 
-    printf("Умножение матриц\n");
-    Matrix* mult = matrix_mult(mat, mat_2, &error);
-    if(error != MATRIX_OPERATION_OK){
-        print_matrix_error(error);
-    }
-    error = print_matrix(mult);
-    for(int i = 0; i < mat->dimension; i++){
-        for(int j = 0; j < mat->dimension; j++){
-            int sum = 0;
-            int sum_2 = 0;
-            for(int k = 0; k < mat -> dimension; k++){
-                ptr = (Complex*)element_get(mat, i, k, &error);
-                ptr_2 = (Complex*)element_get(mat_2, k, j, &error);
-                sum += ptr->real * ptr_2->real - ptr->imag * ptr_2->imag;
-                sum_2 += ptr->real * ptr_2->imag + ptr_2->real * ptr->imag;
-            }
-            ptr_3 = (Complex*)element_get(mult, i, j, &error);
-            if(error != MATRIX_OPERATION_OK){
-                print_matrix_error(error);
-            }
-            ASSERT_EQ(ptr_3->real, sum);
-            ASSERT_EQ(ptr_3->imag, sum_2);
-        }
-    }
-
-    printf("Сложение матриц\n");
-    Matrix* sum = matrix_add(mat, mat_2, &error);
-    if(error != MATRIX_OPERATION_OK){
-        print_matrix_error(error);
-    }
-    error = print_matrix(sum);
-    for(int i = 0; i < mat->dimension; i++){
-        for(int j = 0; j < mat->dimension; j++){
-            ptr = (Complex*)element_get(mat, i, j, &error);
-            ptr_2 = (Complex*)element_get(mat_2, i, j, &error);
-            ptr_3 = (Complex*)element_get(sum, i, j, &error);
-            ASSERT_EQ(ptr_3->real, ptr->real + ptr_2->real);
-            ASSERT_EQ(ptr_3->imag, ptr->imag + ptr_2->imag);
-        }
-    }
-
-    matrix_free(mat_2);
-
-    printf("Транспонироание матрицы\n");
-    Matrix* transp = matrix_transp(mat, &error);
-    if(error != MATRIX_OPERATION_OK){
-        print_matrix_error(error);
-    }
-    error = print_matrix(transp);
-    for(int i = 0; i < mat->dimension; i++){
-        for(int j = 0; j < mat->dimension; j++){
-            ptr = (Complex*)element_get(mat, i, j, &error);
-            ptr_2 = (Complex*)element_get(transp, j, i, &error);
-            ASSERT_EQ(ptr->real, ptr_2->real);
-            ASSERT_EQ(ptr->imag, ptr_2->imag);
-        }
-    }
-
-    printf("Умножение на скаляр 3\n");
-    mat_2 = matrix_create(3, GetComplexTypeInfo(), &error);
-    k = 0;
-    for(int i = 0; i < mat_2->dimension; i++){
-        for(int j = 0; j < mat_2->dimension; j++){
-            elem_re = array_re[k];
-            elem_im = array_im[k];
-            k++;
-            Complex c = complex_create(elem_re, elem_im);
-            error = push_el_matrix(mat_2, &c, i, j);
-        }
-    }
-    error = matrix_multiply_const(mat, 3);
-    if(error != MATRIX_OPERATION_OK){
-        print_matrix_error(error);
-    }
-    error = print_matrix(mat);
-
-    for(int i = 0; i < mat -> dimension; i++){
-        for(int j = 0; j < mat -> dimension; j++){
-            ptr = (Complex*)element_get(mat, i, j, &error);
-            ptr_2 = (Complex*)element_get(mat_2, i, j, &error);
-            ASSERT_EQ(ptr->real, ptr_2->real * 3);
-            ASSERT_EQ(ptr->imag, ptr_2->imag * 3);
-        }
-    }
-
-    matrix_free(mat_2);
-    matrix_free(mat);
-
-    printf("\n=== Обработка ошибок ===\n");
-
-    printf("\nПопытка создать матрицу с отрицательным размером\n");
-    mat = matrix_create(-3, GetComplexTypeInfo(), &error);
-    print_matrix_error(error);
-    ASSERT_EQ(mat, NULL);
-
-    printf("\nПопытка занести в матрицу элемент в несуществующую ячейку [-1][-2]\n");
-    mat = matrix_create(3, GetComplexTypeInfo(), &error);
-    Complex c = complex_create(elem_re, elem_im);
-    error = push_el_matrix(mat, &c, -1, -2);
-    print_matrix_error(error);
-
-    printf("\nПопытка занести в матрицу элемент в несуществующую ячейку [4][4]\n");
-    error = push_el_matrix(mat, &c, 4, 4);
-    print_matrix_error(error);
-
-    printf("\nПопытка узнать элемент матрицы из несуществующей ячейки [-1][-2]\n");
-    (Complex*)element_get(mat, -1, -2, &error);
-    print_matrix_error(error);
-
-    printf("\nПопытка узнать элемент матрицы из несуществующей ячейки [4][4]\n");
-    (Complex*)element_get(mat, 4, 4, &error);
-    print_matrix_error(error);
-
-    printf("\nПопытка сложить матрицы разной размерности\n");
-    mat_2 = matrix_create(4, GetComplexTypeInfo(), &error);
-    sum = matrix_add(mat, mat_2, &error);
-    print_matrix_error(error);
-    ASSERT_EQ(sum, NULL);
-
-    printf("\nПопытка умножить матрицы разной размерности\n");
-    mult = matrix_mult(mat, mat_2, &error);
-    print_matrix_error(error);
-    ASSERT_EQ(mult, NULL);
-
-    matrix_free(mat_2);
-    matrix_free(mat);
-    matrix_free(sum);
-    matrix_free(mult);
-    matrix_free(transp);
+    test_create(3, array_el, GetComplexTypeInfo());
+    
+    test_operation(array_el, array_el_2,GetFloatTypeInfo());
 
     printf("\n=== Тестирование матрицы комплексных чисел закончен ===\n");
 }
