@@ -10,29 +10,29 @@
 
 #define ASSERT_EQ(x, y) assert((x) == (y))
 
-void test_create(size_t dimension, void* array_el, TypeInfo* typeInfo)
+void test_create(int dimension, void* array_el, TypeInfo* typeInfo)
 {
     printf("\n=== Тестирование создания матрицы ===\n");
 
     MatrixErrors error;
 
     if (typeInfo->size == sizeof(int)) {
-        printf("\nmatrix_create: создаем матрицу типа int размерностью %zu\n", dimension);
+        printf("\nmatrix_create: создаем матрицу типа int размерностью %d\n", dimension);
     } else if (typeInfo->size == sizeof(float)) {
-        printf("\nmatrix_create: создаем матрицу типа float размерностью %zu\n", dimension);
+        printf("\nmatrix_create: создаем матрицу типа float размерностью %d\n", dimension);
     } else if (typeInfo->size == sizeof(Complex)) {
-        printf("\nmatrix_create: создаем матрицу типа complex размерностью %zu\n", dimension);
+        printf("\nmatrix_create: создаем матрицу типа complex размерностью %d\n", dimension);
     }
     Matrix* mat = matrix_create(dimension, typeInfo, &error);
     assert(mat != NULL);
     ASSERT_EQ(mat->dimension, dimension);
 
     printf("\nДобавляем элементы (функция push_el_matrix)\n");
-    for(size_t i = 0; i < mat->dimension; i++){
-        for(size_t j = 0; j < mat->dimension; j++){
+    for(int i = 0; i < mat->dimension; i++){
+        for(int j = 0; j < mat->dimension; j++){
             void* elem_ptr = (char*)array_el + (i * mat->dimension + j) * typeInfo->size;
             error = push_el_matrix(mat, elem_ptr, i, j);
-            printf("push_el_matrix: Добавляем в [%zu][%zu] матрицы элемент", i, j);
+            printf("push_el_matrix: Добавляем в [%d][%d] матрицы элемент", i, j);
             mat->typeInfo->print(elem_ptr);
             printf("\n");
         }
@@ -42,25 +42,25 @@ void test_create(size_t dimension, void* array_el, TypeInfo* typeInfo)
     print_matrix(mat);
     printf("\n");
 
-    for(size_t i = 0; i < mat->dimension; i++){
-        for(size_t j = 0; j < mat->dimension; j++){
+    for(int i = 0; i < mat->dimension; i++){
+        for(int j = 0; j < mat->dimension; j++){
             void* elem_ptr = (char*)array_el + (i * mat->dimension + j) * typeInfo->size;
             void* ptr = element_get(mat, i, j, &error);
             if (typeInfo->size == sizeof(int)){
                 int elem = *(int*)elem_ptr;
-                printf("\nelement_get: Берем из [%zu][%zu] матрицы элемент", i, j); 
+                printf("\nelement_get: Берем из [%d][%d] матрицы элемент", i, j); 
                 mat->typeInfo->print(elem_ptr);
                 ASSERT_EQ(*(int*)ptr, elem);     
             }else if(typeInfo->size == sizeof(float)){
                 float elem = *(float*)elem_ptr;
-                printf("\nelement_get: Берем из [%zu][%zu] матрицы элемент", i, j); 
+                printf("\nelement_get: Берем из [%d][%d] матрицы элемент", i, j); 
                 mat->typeInfo->print(elem_ptr);
                 ASSERT_EQ(*(float*)ptr, elem);     
             }else if (typeInfo->size == sizeof(Complex)) {
                 Complex elem = *(Complex*)elem_ptr;
                 Complex elem_mat = *(Complex*)ptr;
                 error = push_el_matrix(mat, elem_ptr, i, j);
-                printf("\nelement_get: Берем из [%zu][%zu] матрицы элемент", i, j);
+                printf("\nelement_get: Берем из [%d][%d] матрицы элемент", i, j);
                 mat->typeInfo->print(elem_ptr);
                 ASSERT_EQ(elem_mat.real, elem.real);  
                 ASSERT_EQ(elem_mat.imag, elem.imag);  
@@ -126,8 +126,8 @@ void test_operation(void* array_el, void* array_el_2, TypeInfo* typeInfo)
     MatrixErrors error;
 
     Matrix* mat = matrix_create(3, typeInfo, &error);
-    for(size_t i = 0; i < mat->dimension; i++){
-        for(size_t j = 0; j < mat->dimension; j++){
+    for(int i = 0; i < mat->dimension; i++){
+        for(int j = 0; j < mat->dimension; j++){
             void* elem_ptr = (char*)array_el + (i * mat->dimension + j) * typeInfo->size;
             error = push_el_matrix(mat, elem_ptr, i, j);
         }
@@ -137,8 +137,8 @@ void test_operation(void* array_el, void* array_el_2, TypeInfo* typeInfo)
     print_matrix(mat);
 
     Matrix* mat_2 = matrix_create(3, typeInfo, &error);
-    for(size_t i = 0; i < mat_2->dimension; i++){
-        for(size_t j = 0; j < mat_2->dimension; j++){
+    for(int i = 0; i < mat_2->dimension; i++){
+        for(int j = 0; j < mat_2->dimension; j++){
             void* elem_ptr = (char*)array_el_2 + (i * mat_2->dimension + j) * typeInfo->size;
             error = push_el_matrix(mat_2, elem_ptr, i, j);
         }
@@ -150,11 +150,11 @@ void test_operation(void* array_el, void* array_el_2, TypeInfo* typeInfo)
     printf("\nУмножение матриц (функция matrix_mult)\n");
     Matrix* mult = matrix_mult(mat, mat_2, &error);
 
-    for(size_t i = 0; i < mat->dimension; i++){
-        for(size_t j = 0; j < mat_2->dimension; j++){
+    for(int i = 0; i < mat->dimension; i++){
+        for(int j = 0; j < mat_2->dimension; j++){
             void* sum = malloc(mat->typeInfo->size);
             memset(sum, 0, mat->typeInfo->size);
-            for(size_t k = 0; k < mat -> dimension; k++){
+            for(int k = 0; k < mat -> dimension; k++){
                 void* ptr = element_get(mat, i, k, &error);
                 void* ptr_2 = element_get(mat_2, k, j, &error);
                 void* mult_el = malloc(mat->typeInfo->size);
@@ -162,7 +162,7 @@ void test_operation(void* array_el, void* array_el_2, TypeInfo* typeInfo)
                 mat->typeInfo->add(sum, sum, mult_el);
                 free(mult_el);
             }
-            printf("\nmatrix_mult: элемент [%zu][%zu]. ", i, j);
+            printf("\nmatrix_mult: элемент [%d][%d]. ", i, j);
             printf("Ожидаемый результат:");
             mult->typeInfo->print(sum);
             printf(" Полученный результат:");
@@ -187,13 +187,13 @@ void test_operation(void* array_el, void* array_el_2, TypeInfo* typeInfo)
     printf("\nСложение матриц (функция matrix_add)\n");
     Matrix* sum = matrix_add(mat, mat_2, &error);
 
-    for(size_t i = 0; i < mat->dimension; i++){
-        for(size_t j = 0; j < mat->dimension; j++){
+    for(int i = 0; i < mat->dimension; i++){
+        for(int j = 0; j < mat->dimension; j++){
             void* sum_mat = malloc(mat->typeInfo->size);
             void* ptr = element_get(mat, i, j, &error);
             void* ptr_2 = element_get(mat_2, i, j, &error);
             mat->typeInfo->add(sum_mat, ptr, ptr_2);
-            printf("\nmatrix_add: элемент [%zu][%zu]. ", i, j);
+            printf("\nmatrix_add: элемент [%d][%d]. ", i, j);
             printf("Ожидаемый результат:");
             sum->typeInfo->print(sum_mat);
             printf(" Полученный результат:");
@@ -215,9 +215,9 @@ void test_operation(void* array_el, void* array_el_2, TypeInfo* typeInfo)
     printf("\nМатрица для транспонирования\n");
     print_matrix(mat);
     Matrix* transp = matrix_transp(mat, &error);
-    for(size_t i = 0; i < mat->dimension; i++){
-        for(size_t j = 0; j < mat->dimension; j++){
-            printf("\nmatrix_transp: элемент [%zu][%zu]. ", i, j);
+    for(int i = 0; i < mat->dimension; i++){
+        for(int j = 0; j < mat->dimension; j++){
+            printf("\nmatrix_transp: элемент [%d][%d]. ", i, j);
             printf("Ожидаемый результат:");
             sum->typeInfo->print(element_get(mat, i, j, &error));
             printf(" Полученный результат:");
@@ -240,19 +240,19 @@ void test_operation(void* array_el, void* array_el_2, TypeInfo* typeInfo)
     printf("\nМатрица для умножения на скаляр\n");
     print_matrix(mat);
     mat_2 = matrix_create(3, typeInfo, &error);
-    for(size_t i = 0; i < mat_2->dimension; i++){
-        for(size_t j = 0; j < mat_2->dimension; j++){
+    for(int i = 0; i < mat_2->dimension; i++){
+        for(int j = 0; j < mat_2->dimension; j++){
             void* elem_ptr = (char*)array_el + (i * mat_2->dimension + j) * typeInfo->size;
             error = push_el_matrix(mat_2, elem_ptr, i, j);
         }
     }
     matrix_multiply_const(mat, 3);
-     for(size_t i = 0; i < mat -> dimension; i++){
-        for(size_t j = 0; j < mat -> dimension; j++){
+     for(int i = 0; i < mat -> dimension; i++){
+        for(int j = 0; j < mat -> dimension; j++){
             void* ptr = element_get(mat_2, i, j, &error);
             void* mult_el = malloc(mat->typeInfo->size);
             mat->typeInfo->mult_const(mult_el, ptr, 3);
-            printf("\nmatrix_transp: элемент [%zu][%zu]. ", i, j);
+            printf("\nmatrix_transp: элемент [%d][%d]. ", i, j);
             printf("Ожидаемый результат:");
             sum->typeInfo->print(mult_el);
             printf(" Полученный результат:");

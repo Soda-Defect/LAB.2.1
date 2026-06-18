@@ -38,7 +38,7 @@ Matrix* matrix_create(int dimension, TypeInfo* typeInfo, MatrixErrors* operation
 
 }
 
-MatrixErrors push_el_matrix(Matrix* mat, void* item, size_t row, size_t col) {
+MatrixErrors push_el_matrix(Matrix* mat, void* item, int row, int col) {
     if (mat == NULL) {
         return MATRIX_NOT_DEFINED;
     }
@@ -47,7 +47,7 @@ MatrixErrors push_el_matrix(Matrix* mat, void* item, size_t row, size_t col) {
         return MATRIX_NOT_DEFINED;
     }
     
-    if (row >= mat->dimension || col >= mat->dimension) {
+    if (row < 0 || row >= mat->dimension || col < 0 || col >= mat->dimension) {
         return INVALID_MATRIX_INDEX;
     }
 
@@ -57,13 +57,13 @@ MatrixErrors push_el_matrix(Matrix* mat, void* item, size_t row, size_t col) {
     return MATRIX_OPERATION_OK;
 }
 
-void* element_get(Matrix* mat, size_t row, size_t col, MatrixErrors* operationResult) {
+void* element_get(Matrix* mat, int row, int col, MatrixErrors* operationResult) {
     if (mat == NULL) {
         *operationResult = MATRIX_NOT_DEFINED;
         return NULL;
     }
     
-    if (row >= mat->dimension || col >= mat->dimension) {
+    if (row < 0 || row >= mat->dimension || col < 0 || col >= mat->dimension) {
         *operationResult = INVALID_MATRIX_INDEX;
         return NULL;
     }
@@ -98,8 +98,8 @@ Matrix* matrix_add(Matrix* mat_1, Matrix* mat_2, MatrixErrors* operationResult) 
         return NULL;
     }
 
-    for (size_t i = 0; i < mat_1->dimension; i++) {
-        for (size_t j = 0; j < mat_1->dimension; j++) {
+    for (int i = 0; i < mat_1->dimension; i++) {
+        for (int j = 0; j < mat_1->dimension; j++) {
             void* sum = malloc(mat_1->typeInfo->size);
             if (sum == NULL) {
                 *operationResult = MEMORY_ALLOCATION_FAILED;
@@ -160,8 +160,8 @@ Matrix* matrix_mult(Matrix* mat_1, Matrix* mat_2, MatrixErrors* operationResult)
         return NULL;
     }
 
-    for (size_t i = 0; i < mat_1->dimension; i++) {
-        for (size_t j = 0; j < mat_2->dimension; j++) {
+    for (int i = 0; i < mat_1->dimension; i++) {
+        for (int j = 0; j < mat_2->dimension; j++) {
             void* sum = malloc(mat_1->typeInfo->size);
             if (sum == NULL) {
                 *operationResult = MEMORY_ALLOCATION_FAILED;
@@ -170,7 +170,7 @@ Matrix* matrix_mult(Matrix* mat_1, Matrix* mat_2, MatrixErrors* operationResult)
             }
             memset(sum, 0, mat_1->typeInfo->size);
             
-            for (size_t k = 0; k < mat_1->dimension; k++) {
+            for (int k = 0; k < mat_1->dimension; k++) {
                 void* mult = malloc(mat_1->typeInfo->size);
                 if (mult == NULL) {
                     *operationResult = MEMORY_ALLOCATION_FAILED;
@@ -222,8 +222,8 @@ Matrix* matrix_transp(Matrix* mat_1, MatrixErrors* operationResult) {
         return NULL;
     }
 
-    for (size_t i = 0; i < mat_1->dimension; i++) {
-        for (size_t j = 0; j < mat_1->dimension; j++) {
+    for (int i = 0; i < mat_1->dimension; i++) {
+        for (int j = 0; j < mat_1->dimension; j++) {
             MatrixErrors err;
             void* elem_1 = element_get(mat_1, i, j, &err);
             if (elem_1 == NULL) {
@@ -254,8 +254,8 @@ MatrixErrors matrix_multiply_const(Matrix* mat_1, int alpha) {
         return OPERATION_NOT_DEFINED;
     }
 
-    for (size_t i = 0; i < mat_1->dimension; i++) {
-        for (size_t j = 0; j < mat_1->dimension; j++) {
+    for (int i = 0; i < mat_1->dimension; i++) {
+        for (int j = 0; j < mat_1->dimension; j++) {
             void* elem_1 = (char*)mat_1->data + (i * mat_1->dimension + j) * mat_1->typeInfo->size;
             if (elem_1 == NULL) {
                 return MATRIX_NOT_DEFINED;
@@ -277,9 +277,9 @@ MatrixErrors print_matrix(Matrix* mat) {
         return OPERATION_NOT_DEFINED;
     }
     
-    for (size_t i = 0; i < mat->dimension; i++) {
+    for (int i = 0; i < mat->dimension; i++) {
         printf("|");
-        for (size_t j = 0; j < mat->dimension; j++) {
+        for (int j = 0; j < mat->dimension; j++) {
             MatrixErrors err;
             void* elem = element_get(mat, i, j, &err);
             if (elem != NULL && err == MATRIX_OPERATION_OK) {
